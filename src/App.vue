@@ -1,34 +1,20 @@
 <template>
-    <h1>Move some blocks</h1>
-    <MainBlockItem />
-    <BlockItem v-for="(block, key) in this.blocks" :key="key" :block="block" />
-    <strong>{{ this.me  }}</strong>
-    <br>
-    <pre>
-        {{ this.blocks }}
-    </pre>
+    <MainPage v-if="!username" />
+    <GamePage v-else />
 </template>
 
 <script>
-    import { socket, state } from "@/socket";
-    import MainBlockItem from './components/MainBlockItem.vue';
-    import BlockItem from "./components/BlockItem.vue";
+    import { mapState } from 'vuex'
+    import MainPage from '@/pages/MainPage.vue'
+    import GamePage from '@/pages/GamePage.vue'
 
     export default {
-        created() {
-            socket.connect()
-        },
         computed: {
-            me() {
-                return state.me
-            },
-            blocks() {
-                return state.blocks
-            }
+            ...mapState(['username'])
         },
         components: {
-            MainBlockItem,
-            BlockItem
+            MainPage,
+            GamePage
         }
     }
 </script>

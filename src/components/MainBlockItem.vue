@@ -1,5 +1,5 @@
 <template>
-    <div class="block" :style="{ transform: `translate(${this.translateX}px, ${this.translateY}px)` }" />
+    <div class="main-block block" :style="{ transform: `translate(${this.translateX}px, ${this.translateY}px)` }" />
 </template>
 
 <script>
@@ -43,10 +43,8 @@
 </script>
 
 <style scoped>
-    .block {
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        background: blue;
+    .main-block {
+        background: blue !important;
+        z-index: 100;
     }
 </style>

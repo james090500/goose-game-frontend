@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@vueuse/core": "^12.7.0",
+    "bootstrap": "^5.3.3",
     "eslint-plugin-vue": "^9.32.0",
     "socket.io-client": "^4.8.1",
     "vite-plugin-eslint": "^1.8.1",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",

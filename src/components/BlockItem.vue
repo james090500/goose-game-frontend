@@ -1,5 +1,7 @@
 <template>
-    <div class="block" :style="{ transform: `translate(${this.block.x}px, ${this.block.y}px)` }" />
+    <div class="block" :style="{ transform: `translate(${this.block.x}px, ${this.block.y}px)` }">
+        <strong>{{ this.block.username }}</strong>
+    </div>
 </template>
 
 <script>
@@ -7,17 +9,19 @@
         props: {
             block: {
                 type: Object,
+                default: null
             }
         }
     }
 </script>
 
 
-<style scoped>
+<style>
     .block {
         position: absolute;
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
         background: green;
+        border-radius: 0.25rem;
     }
 </style>
