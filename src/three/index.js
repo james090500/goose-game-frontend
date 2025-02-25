@@ -4,6 +4,7 @@ import {
     PerspectiveCamera,
     PointLight
 } from 'three'
+import Stats from 'three/addons/libs/stats.module.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
@@ -23,6 +24,10 @@ class TheGame {
 
         //Set the instance
         TheGame.instance = this;
+
+        //Stats
+        this.stats = new Stats();
+        options.canvas.parentElement.appendChild(this.stats.dom);
 
         this.renderer = new WebGLRenderer({
             canvas: options.canvas,
@@ -51,7 +56,7 @@ class TheGame {
         this.composer.addPass(this.fxaaPass)
 
         //Controls
-        this.controls = new Controls(this.camera, this.renderer, options)
+        this.controls = new Controls(options)
 
         // Start Multiplayer
         this.multiplayer = new Multiplayer(options.username)
@@ -89,9 +94,11 @@ class TheGame {
     animate() {
         if (this._dispose) return
 
+        this.delta = this.clock.getDelta()
+
         requestAnimationFrame(this.animate)
 
-        this.controls.update(this.clock.getDelta())
+        this.controls.update(this.delta)
         this.composer.render()
 
         if (this.resizeRendererToDisplaySize()) {
@@ -99,6 +106,9 @@ class TheGame {
                 this.canvas.clientWidth / this.canvas.clientHeight
             this.camera.updateProjectionMatrix()
         }
+
+        // FPS Stats
+        this.stats.update()
     }
     /**
      * Dispose

@@ -1,9 +1,9 @@
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js'
-import { Vector3 } from 'three'
 import TheGame from './index.js'
+import { Euler, Vector3 } from 'three'
 
 class Controls {
-    moveSpeed = 0.1 // Speed of movement
+    moveSpeed = 5 // Speed of movement
     keys = {
         KeyW: false,
         KeyS: false,
@@ -13,12 +13,12 @@ class Controls {
         ShiftLeft: false,
     } // Movement keys
 
-    constructor(camera, renderer, options) {
-        this.camera = camera
-        this.renderer = renderer
+    constructor(options) {
+        this.camera = TheGame.instance.camera
+        this.renderer = TheGame.instance.renderer
 
         // Controls
-        this.controls = new PointerLockControls(camera, renderer.domElement)
+        this.controls = new PointerLockControls(this.camera, this.renderer.domElement)
         this.controls.addEventListener('lock', options.onLock)
         this.controls.addEventListener('unlock', options.onUnlock)
         this.controls.lookSpeed = 0.1
@@ -35,12 +35,19 @@ class Controls {
             }
         })
 
-        this.controls.addEventListener( 'change', (event) => {
-            TheGame.instance.multiplayer.updateRotation(this.camera.rotation.x, this.camera.rotation.y, this.camera.rotation.z)
-        } );
+        // Store the previous position and rotation
+        this.previousPosition = new Vector3()
+        this.previousRotation = new Euler()
+        this.previousPosition.copy(this.camera.position)
+        this.previousRotation.copy(this.camera.rotation)
+
+        // Throttle the emit rate to 20 TPS
+        this.emitInterval = setInterval(() => {
+            this.emitMovement()
+        }, 50) // 50ms interval for 20 TPS
     }
     // Update movement
-    updateMovement() {
+    updateMovement(delta) {
         const direction = new Vector3()
         this.camera.getWorldDirection(direction) // Get camera facing direction
 
@@ -50,45 +57,53 @@ class Controls {
             .crossVectors(this.camera.up, forward)
             .normalize()
 
-        let moved = false
+        // Normalize movement speed using delta
+        const moveSpeed = this.moveSpeed * delta
 
         // Apply movement
         if (this.keys.KeyW) {
             this.camera.position.add(
-                forward.clone().multiplyScalar(this.moveSpeed)
+                forward.clone().multiplyScalar(moveSpeed)
             ) // Forward
-            moved = true
         }
         if (this.keys.KeyS) {
             this.camera.position.add(
-                forward.clone().multiplyScalar(-this.moveSpeed)
+                forward.clone().multiplyScalar(-moveSpeed)
             ) // Backward
-            moved = true
         }
         if (this.keys.KeyA) {
             this.camera.position.add(
-                right.clone().multiplyScalar(this.moveSpeed)
+                right.clone().multiplyScalar(moveSpeed)
             ) // Left
-            moved = true
         }
         if (this.keys.KeyD) {
             this.camera.position.add(
-                right.clone().multiplyScalar(-this.moveSpeed)
+                right.clone().multiplyScalar(-moveSpeed)
             ) // Right
-            moved = true
         }
         if (this.keys.Space) {
-            this.camera.position.add(new Vector3(0, this.moveSpeed, 0)) // Up
-            moved = true
+            this.camera.position.add(new Vector3(0, moveSpeed, 0)) // Up
         }
         if (this.keys.ShiftLeft) {
-            this.camera.position.add(new Vector3(0, -this.moveSpeed, 0)) // Down
-            moved = true
+            this.camera.position.add(new Vector3(0, -moveSpeed, 0)) // Down
+        }
+    }
+
+    /**
+     * Emit movement speed if the player has moved
+     * and at a rate of 20 TPS
+     */
+    emitMovement() {
+        if (!this.camera.position.equals(this.previousPosition)) {
+            const clonedPosition = this.camera.position.clone()
+            TheGame.instance.multiplayer.updatePosition(clonedPosition)
+            this.previousPosition.copy(this.camera.position)
         }
 
-        // Update movement only if moved
-        if (moved) {
-            TheGame.instance.multiplayer.updatePosition(this.camera.position.x, this.camera.position.y, this.camera.position.z)
+        if (!this.camera.rotation.equals(this.previousRotation)) {
+            const clonedRotation = this.camera.rotation.clone()
+            TheGame.instance.multiplayer.updateRotation(clonedRotation)
+            this.previousRotation.copy(this.camera.rotation)
         }
     }
 
@@ -102,7 +117,7 @@ class Controls {
      * Update the controls
      */
     update(delta) {
-        this.updateMovement()
+        this.updateMovement(delta)
         this.controls.update(delta)
     }
 }

@@ -30,7 +30,6 @@ import scene from './scene.js'
         const loader = new FontLoader();
         const font = loader.parse(HelvetikerFont);
 
-        console.log(username)
         this.nametag = new Mesh(
             new TextGeometry(username ?? '', {
                 font: font,

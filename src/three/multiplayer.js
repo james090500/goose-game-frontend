@@ -16,11 +16,11 @@ class Multiplayer {
             this.updatePlayers(data)
         })
     }
-    updatePosition(x, y, z) {
-        this.io.emit('move', { x, y, z })
+    updatePosition(position) {
+        this.io.emit('move', { x: position.x, y: position.y, z: position.z })
     }
-    updateRotation(x, y, z) {
-        this.io.emit('rotation', { x, y, z })
+    updateRotation(rotation) {
+        this.io.emit('rotation', { x: rotation.x, y: rotation.y, z: rotation.z })
     }
     updatePlayers(newPlayers) {
         // Remove players that are not in the newPlayers array
@@ -45,8 +45,6 @@ class Multiplayer {
                 this.players.push(new Player(player.id, player.username, player.position, player.rotation))
             }
         })
-
-        console.log(this.players)
     }
 }
 
