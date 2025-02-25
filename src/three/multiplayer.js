@@ -5,9 +5,9 @@ class Multiplayer {
     players = []
 
     constructor(username) {
-        const url = import.meta.env.DEV ?
-        `http://${window.location.hostname}:3000`
-        : `https://mb-api.james090500.com`
+        const url = import.meta.env.DEV
+            ? `http://${window.location.hostname}:3000`
+            : `https://mb-api.james090500.com`
 
         this.io = io(`${url}?username=${username}`)
 
@@ -20,32 +20,42 @@ class Multiplayer {
         this.io.emit('move', { x: position.x, y: position.y, z: position.z })
     }
     updateRotation(rotation) {
-        this.io.emit('rotation', { x: rotation.x, y: rotation.y, z: rotation.z })
+        this.io.emit('rotation', {
+            x: rotation.x,
+            y: rotation.y,
+            z: rotation.z,
+        })
     }
     updatePlayers(newPlayers) {
         // Remove players that are not in the newPlayers array
-        this.players.forEach(player => {
-            if (!newPlayers.some(newPlayer => newPlayer.id === player.id)) {
-                player.dispose(); // Dispose the player before filtering
+        this.players.forEach((player) => {
+            if (!newPlayers.some((newPlayer) => newPlayer.id === player.id)) {
+                player.dispose() // Dispose the player before filtering
             }
-        });
-
+        })
 
         // Update existing players or add new players
         newPlayers.forEach((player) => {
             //Don't add myself
-            if(player.id === this.me) return
+            if (player.id === this.me) return
 
             //Find the player index
-            let index = this.players.findIndex(item => item.id === player.id);
+            let index = this.players.findIndex((item) => item.id === player.id)
             if (index !== -1) {
                 this.players[index].setPosition(player.position)
                 this.players[index].setRotation(player.rotation)
             } else {
-                this.players.push(new Player(player.id, player.username, player.position, player.rotation))
+                this.players.push(
+                    new Player(
+                        player.id,
+                        player.username,
+                        player.position,
+                        player.rotation
+                    )
+                )
             }
         })
     }
 }
 
-export default Multiplayer;
+export default Multiplayer

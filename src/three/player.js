@@ -3,44 +3,41 @@ import {
     BoxGeometry,
     MeshStandardMaterial,
     MeshNormalMaterial,
-    Matrix4
+    Matrix4,
 } from 'three'
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import HelvetikerFont from 'three/examples/fonts/helvetiker_regular.typeface.json';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'
+import { FontLoader } from 'three/addons/loaders/FontLoader.js'
+import HelvetikerFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
 import scene from './scene.js'
 
- class Player {
+class Player {
     constructor(id, username, position, rotation) {
-        this.id = id;
-        this.username = username;
+        this.id = id
+        this.username = username
 
-        this.mesh = new Mesh(
-            new BoxGeometry(1, 2, 1),
-            [
-                new MeshStandardMaterial({ color: 0xff0000 }), // Right
-                new MeshStandardMaterial({ color: 0xff0000 }), // Left
-                new MeshStandardMaterial({ color: 0xff0000 }), // Top
-                new MeshStandardMaterial({ color: 0xff0000 }), // Bottom
-                new MeshStandardMaterial({ color: 0xff0000 }), // Front
-                new MeshStandardMaterial({ color: 0xff00ff })  // Back
-            ]
-        )
+        this.mesh = new Mesh(new BoxGeometry(1, 2, 1), [
+            new MeshStandardMaterial({ color: 0xff0000 }), // Right
+            new MeshStandardMaterial({ color: 0xff0000 }), // Left
+            new MeshStandardMaterial({ color: 0xff0000 }), // Top
+            new MeshStandardMaterial({ color: 0xff0000 }), // Bottom
+            new MeshStandardMaterial({ color: 0xff0000 }), // Front
+            new MeshStandardMaterial({ color: 0xff00ff }), // Back
+        ])
 
-        const loader = new FontLoader();
-        const font = loader.parse(HelvetikerFont);
+        const loader = new FontLoader()
+        const font = loader.parse(HelvetikerFont)
 
         this.nametag = new Mesh(
             new TextGeometry(username ?? '', {
                 font: font,
                 size: 0.5,
                 depth: 0.1,
-                curveSegments: 1
+                curveSegments: 1,
             }),
             new MeshNormalMaterial()
         )
-        this.nametag.geometry.center();
-        this.nametag.scale.set(-1,1,1);
+        this.nametag.geometry.center()
+        this.nametag.scale.set(-1, 1, 1)
 
         this.setPosition(position)
         this.setRotation(rotation)
@@ -62,7 +59,7 @@ import scene from './scene.js'
     dispose() {
         scene.remove(this.mesh)
         this.mesh.geometry.dispose()
-        this.mesh.material.forEach(material => material.dispose())
+        this.mesh.material.forEach((material) => material.dispose())
 
         scene.remove(this.nametag)
         this.nametag.geometry.dispose()

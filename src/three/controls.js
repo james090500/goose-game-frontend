@@ -18,7 +18,10 @@ class Controls {
         this.renderer = TheGame.instance.renderer
 
         // Controls
-        this.controls = new PointerLockControls(this.camera, this.renderer.domElement)
+        this.controls = new PointerLockControls(
+            this.camera,
+            this.renderer.domElement
+        )
         this.controls.addEventListener('lock', options.onLock)
         this.controls.addEventListener('unlock', options.onUnlock)
         this.controls.lookSpeed = 0.1
@@ -62,24 +65,16 @@ class Controls {
 
         // Apply movement
         if (this.keys.KeyW) {
-            this.camera.position.add(
-                forward.clone().multiplyScalar(moveSpeed)
-            ) // Forward
+            this.camera.position.add(forward.clone().multiplyScalar(moveSpeed)) // Forward
         }
         if (this.keys.KeyS) {
-            this.camera.position.add(
-                forward.clone().multiplyScalar(-moveSpeed)
-            ) // Backward
+            this.camera.position.add(forward.clone().multiplyScalar(-moveSpeed)) // Backward
         }
         if (this.keys.KeyA) {
-            this.camera.position.add(
-                right.clone().multiplyScalar(moveSpeed)
-            ) // Left
+            this.camera.position.add(right.clone().multiplyScalar(moveSpeed)) // Left
         }
         if (this.keys.KeyD) {
-            this.camera.position.add(
-                right.clone().multiplyScalar(-moveSpeed)
-            ) // Right
+            this.camera.position.add(right.clone().multiplyScalar(-moveSpeed)) // Right
         }
         if (this.keys.Space) {
             this.camera.position.add(new Vector3(0, moveSpeed, 0)) // Up

@@ -1,10 +1,5 @@
-import {
-    Clock,
-    WebGLRenderer,
-    PerspectiveCamera,
-    PointLight
-} from 'three'
-import Stats from 'three/addons/libs/stats.module.js';
+import { Clock, WebGLRenderer, PerspectiveCamera, PointLight } from 'three'
+import Stats from 'three/addons/libs/stats.module.js'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
@@ -14,20 +9,20 @@ import Controls from './controls.js'
 import Multiplayer from './multiplayer.js'
 
 class TheGame {
-    static instance;
+    static instance
     clock = new Clock()
 
     constructor(options) {
-        if(TheGame.instance) {
+        if (TheGame.instance) {
             throw new Error('There can only be one instance of TheGame')
         }
 
         //Set the instance
-        TheGame.instance = this;
+        TheGame.instance = this
 
         //Stats
-        this.stats = new Stats();
-        options.canvas.parentElement.appendChild(this.stats.dom);
+        this.stats = new Stats()
+        options.canvas.parentElement.appendChild(this.stats.dom)
 
         this.renderer = new WebGLRenderer({
             canvas: options.canvas,

@@ -1,9 +1,8 @@
 import pluginVue from 'eslint-plugin-vue'
-import eslintConfigPrettier from "eslint-config-prettier";
+import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default [
     ...pluginVue.configs['flat/strongly-recommended'],
-    eslintConfigPrettier,
     {
         rules: {
             'vue/html-indent': [
@@ -36,4 +35,5 @@ export default [
             },
         },
     },
+    eslintConfigPrettier,
 ]
