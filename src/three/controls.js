@@ -91,15 +91,18 @@ class Controls {
         if (this.jumping) {
             const elapsedTime = this.clock.getElapsedTime() - this.jumpStartTime
             if (elapsedTime < this.jumpDuration) {
-                const jumpHeight = Math.sin((elapsedTime / this.jumpDuration) * Math.PI) * this.jumpSpeed * delta
+                const jumpHeight =
+                    Math.sin((elapsedTime / this.jumpDuration) * Math.PI) *
+                    this.jumpSpeed *
+                    delta
                 this.camera.position.y += jumpHeight
             } else {
                 this.jumping = false
             }
         } else {
-            if(this.camera.position.y - 1 > 1) {
+            if (this.camera.position.y - 1 > 1) {
                 this.camera.position.add(new Vector3(0, -moveSpeed * 2, 0)) // Down
-            } else if(this.camera.position.y < 1) {
+            } else if (this.camera.position.y < 1) {
                 this.camera.position.y = 10
             }
         }

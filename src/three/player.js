@@ -1,13 +1,9 @@
-import {
-    Mesh,
-    BoxGeometry,
-    MeshStandardMaterial,
-    MeshNormalMaterial,
-    Matrix4,
-} from 'three'
+import { Mesh, MeshNormalMaterial } from 'three'
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js'
 import HelvetikerFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
+import { MTLLoader } from 'three/addons/loaders/MTLLoader.js'
 import scene from './scene.js'
 
 class Player {
@@ -15,14 +11,19 @@ class Player {
         this.id = id
         this.username = username
 
-        this.mesh = new Mesh(new BoxGeometry(1, 2, 1), [
-            new MeshStandardMaterial({ color: 0xff0000 }), // Right
-            new MeshStandardMaterial({ color: 0xff0000 }), // Left
-            new MeshStandardMaterial({ color: 0xff0000 }), // Top
-            new MeshStandardMaterial({ color: 0xff0000 }), // Bottom
-            new MeshStandardMaterial({ color: 0xff0000 }), // Front
-            new MeshStandardMaterial({ color: 0xff00ff }), // Back
-        ])
+        // Load Goose
+        const mtlLoader = new MTLLoader()
+        mtlLoader.load('character/goose.mtl', (mtl) => {
+            mtl.preload()
+
+            const objLoader = new OBJLoader()
+            objLoader.setMaterials(mtl)
+            objLoader.load('character/goose.obj', (root) => {
+                root.scale.set(1.75, 1.75, -1.75)
+                this.character = root
+                scene.add(root)
+            })
+        })
 
         const loader = new FontLoader()
         const font = loader.parse(HelvetikerFont)
@@ -42,24 +43,26 @@ class Player {
         this.setPosition(position)
         this.setRotation(rotation)
 
-        scene.add(this.mesh)
         scene.add(this.nametag)
     }
 
     setPosition(position) {
-        this.nametag.position.set(position.x, position.y + .5, position.z)
-        this.mesh.position.set(position.x, position.y - 0.75, position.z)
+        this.nametag.position.set(position.x, position.y + 0.5, position.z)
+        if(this.character) {
+            this.character.position.set(position.x, position.y - 2, position.z)
+        }
     }
 
     setRotation(rotation) {
-        this.mesh.rotation.set(rotation.x, rotation.y, rotation.z)
+        if(this.character) {
+            this.character.rotation.set(rotation.x, rotation.y, rotation.z)
+        }
         this.nametag.rotation.set(rotation.x, rotation.y, rotation.z)
     }
 
     dispose() {
-        scene.remove(this.mesh)
-        this.mesh.geometry.dispose()
-        this.mesh.material.forEach((material) => material.dispose())
+        scene.remove(this.character)
+        // this.mesh.geometry.dispose()
 
         scene.remove(this.nametag)
         this.nametag.geometry.dispose()

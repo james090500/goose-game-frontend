@@ -8,7 +8,7 @@ import {
     Color,
     HemisphereLight,
     TextureLoader,
-    RepeatWrapping
+    RepeatWrapping,
 } from 'three'
 
 const scene = new Scene()
@@ -19,17 +19,17 @@ scene.add(new AmbientLight(0xffffff, 1))
 scene.add(new HemisphereLight(0xffffbb, 0x080820, 2))
 
 //Ground
-let loader = new TextureLoader();
-const texture = loader.load( 'grass.png', function ( texture ) {
-    texture.wrapS = texture.wrapT = RepeatWrapping;
-    texture.offset.set( 0, 0 );
-    texture.repeat.set( 10000 / 32, 10000 / 32 );
-} );
+let loader = new TextureLoader()
+const texture = loader.load('grass.png', function (texture) {
+    texture.wrapS = texture.wrapT = RepeatWrapping
+    texture.offset.set(0, 0)
+    texture.repeat.set(10000 / 32, 10000 / 32)
+})
 
 const ground = new Mesh(
     new PlaneGeometry(10000, 10000),
     new MeshStandardMaterial({
-        map: texture
+        map: texture,
     })
 )
 
