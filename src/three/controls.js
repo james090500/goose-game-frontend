@@ -1,9 +1,11 @@
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js'
 import TheGame from './index.js'
-import { Euler, Vector3 } from 'three'
+import { Euler, Vector3, Clock } from 'three'
 
 class Controls {
     moveSpeed = 5 // Speed of movement
+    jumpSpeed = 10 // Speed of jump
+    jumpDuration = 0.5 // Duration of jump
     keys = {
         KeyW: false,
         KeyS: false,
@@ -48,6 +50,11 @@ class Controls {
         this.emitInterval = setInterval(() => {
             this.emitMovement()
         }, 50) // 50ms interval for 20 TPS
+
+        // Jumping state
+        this.jumping = false
+        this.jumpStartTime = 0
+        this.clock = new Clock()
     }
     // Update movement
     updateMovement(delta) {
@@ -77,11 +84,31 @@ class Controls {
             this.camera.position.add(right.clone().multiplyScalar(-moveSpeed)) // Right
         }
         if (this.keys.Space) {
-            this.camera.position.add(new Vector3(0, moveSpeed, 0)) // Up
+            this.jump()
         }
-        if (this.keys.ShiftLeft) {
-            this.camera.position.add(new Vector3(0, -moveSpeed, 0)) // Down
+
+        // Handle jumping
+        if (this.jumping) {
+            const elapsedTime = this.clock.getElapsedTime() - this.jumpStartTime
+            if (elapsedTime < this.jumpDuration) {
+                const jumpHeight = Math.sin((elapsedTime / this.jumpDuration) * Math.PI) * this.jumpSpeed * delta
+                this.camera.position.y += jumpHeight
+            } else {
+                this.jumping = false
+            }
+        } else {
+            if(this.camera.position.y - 1 > 1) {
+                this.camera.position.add(new Vector3(0, -moveSpeed * 2, 0)) // Down
+            } else if(this.camera.position.y < 1) {
+                this.camera.position.y = 10
+            }
         }
+    }
+
+    // Initiate jump
+    jump() {
+        this.jumping = true
+        this.jumpStartTime = this.clock.getElapsedTime()
     }
 
     /**

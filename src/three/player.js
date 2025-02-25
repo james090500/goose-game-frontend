@@ -47,8 +47,8 @@ class Player {
     }
 
     setPosition(position) {
-        this.nametag.position.set(position.x, position.y + 1.5, position.z)
-        this.mesh.position.set(position.x, position.y, position.z)
+        this.nametag.position.set(position.x, position.y + .5, position.z)
+        this.mesh.position.set(position.x, position.y - 0.75, position.z)
     }
 
     setRotation(rotation) {

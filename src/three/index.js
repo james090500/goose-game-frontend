@@ -28,7 +28,6 @@ class TheGame {
             canvas: options.canvas,
             alpha: true,
         })
-        this.renderer.setClearColor(0x87ceeb, 1)
 
         this.canvas = this.renderer.domElement
 
@@ -38,8 +37,8 @@ class TheGame {
             1,
             1000
         )
-        this.camera.add(new PointLight(0xffffff, 30))
-        this.camera.rotateX = 0.5
+        this.camera.add(new PointLight(0xffffff, 5))
+        this.camera.position.y = 10
         scene.add(this.camera)
 
         // Shaders
