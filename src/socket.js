@@ -1,14 +1,11 @@
-import { io } from "socket.io-client"
-import { reactive } from "vue"
-import { useStore } from 'vuex'
-
-const store = useStore()
+import { io } from 'socket.io-client'
+import { reactive } from 'vue'
 
 const url = `http://${window.location.hostname}${import.meta.env.DEV ? ':3000' : ''}`
 
 export const state = reactive({
-    me: "",
-    blocks: {}
+    me: '',
+    blocks: {},
 })
 
 export const socket = io(url)

@@ -1,29 +1,39 @@
 import pluginVue from 'eslint-plugin-vue'
+import eslintConfigPrettier from "eslint-config-prettier";
+
 export default [
     ...pluginVue.configs['flat/strongly-recommended'],
+    eslintConfigPrettier,
     {
         rules: {
-            "vue/html-indent": ["error", 4, {
-                "attribute": 1,
-                "baseIndent": 1,
-                "closeBracket": 0,
-                "alignAttributesVertically": true,
-                "ignores": []
-            }],
-            "vue/max-attributes-per-line": ["error", {
-                "singleline": {
-                    "max": 4
+            'vue/html-indent': [
+                'error',
+                4,
+                {
+                    attribute: 1,
+                    baseIndent: 1,
+                    closeBracket: 0,
+                    alignAttributesVertically: true,
+                    ignores: [],
                 },
-                "multiline": {
-                    "max": 4
-                }
-            }]
+            ],
+            'vue/max-attributes-per-line': [
+                'error',
+                {
+                    singleline: {
+                        max: 4,
+                    },
+                    multiline: {
+                        max: 4,
+                    },
+                },
+            ],
         },
         languageOptions: {
             globals: {
-                axios: "readonly",
-                bootstra: "readonly"
-            }
-        }
-    }
+                axios: 'readonly',
+                bootstra: 'readonly',
+            },
+        },
+    },
 ]

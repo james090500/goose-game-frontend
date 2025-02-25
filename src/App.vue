@@ -4,17 +4,17 @@
 </template>
 
 <script>
-    import { mapState } from 'vuex'
-    import MainPage from '@/pages/MainPage.vue'
-    import GamePage from '@/pages/GamePage.vue'
+import { mapState } from 'vuex'
+import MainPage from '@/pages/MainPage.vue'
+import GamePage from '@/pages/GamePage.vue'
 
-    export default {
-        computed: {
-            ...mapState(['username'])
-        },
-        components: {
-            MainPage,
-            GamePage
-        }
-    }
+export default {
+    computed: {
+        ...mapState(['username']),
+    },
+    components: {
+        MainPage,
+        GamePage,
+    },
+}
 </script>

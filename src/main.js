@@ -7,5 +7,8 @@ const app = createApp(App)
 import store from './store'
 app.use(store)
 
+//Themes
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 // Mount the app
 app.mount('#app')
