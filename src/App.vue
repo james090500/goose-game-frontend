@@ -1,6 +1,8 @@
 <template>
-    <MainPage v-if="!username" />
-    <GamePage v-else />
+    <div class="container-fluid">
+        <MainPage v-if="!username" />
+        <GamePage v-else />
+    </div>
 </template>
 
 <script>

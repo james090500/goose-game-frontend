@@ -1,8 +1,9 @@
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js'
 import { Vector3 } from 'three'
+import TheGame from './index.js'
 
 class Controls {
-    moveSpeed = 0.2 // Speed of movement
+    moveSpeed = 0.1 // Speed of movement
     keys = {
         KeyW: false,
         KeyS: false,
@@ -33,6 +34,10 @@ class Controls {
                 this.keys[event.code] = false
             }
         })
+
+        this.controls.addEventListener( 'change', (event) => {
+            TheGame.instance.multiplayer.updateRotation(this.camera.rotation.x, this.camera.rotation.y, this.camera.rotation.z)
+        } );
     }
     // Update movement
     updateMovement() {
@@ -45,30 +50,48 @@ class Controls {
             .crossVectors(this.camera.up, forward)
             .normalize()
 
+        let moved = false
+
         // Apply movement
-        if (this.keys.KeyW)
+        if (this.keys.KeyW) {
             this.camera.position.add(
                 forward.clone().multiplyScalar(this.moveSpeed)
             ) // Forward
-        if (this.keys.KeyS)
+            moved = true
+        }
+        if (this.keys.KeyS) {
             this.camera.position.add(
                 forward.clone().multiplyScalar(-this.moveSpeed)
             ) // Backward
-
-        if (this.keys.KeyA)
+            moved = true
+        }
+        if (this.keys.KeyA) {
             this.camera.position.add(
                 right.clone().multiplyScalar(this.moveSpeed)
             ) // Left
-        if (this.keys.KeyD)
+            moved = true
+        }
+        if (this.keys.KeyD) {
             this.camera.position.add(
                 right.clone().multiplyScalar(-this.moveSpeed)
             ) // Right
-
-        if (this.keys.Space)
+            moved = true
+        }
+        if (this.keys.Space) {
             this.camera.position.add(new Vector3(0, this.moveSpeed, 0)) // Up
-        if (this.keys.ShiftLeft)
+            moved = true
+        }
+        if (this.keys.ShiftLeft) {
             this.camera.position.add(new Vector3(0, -this.moveSpeed, 0)) // Down
+            moved = true
+        }
+
+        // Update movement only if moved
+        if (moved) {
+            TheGame.instance.multiplayer.updatePosition(this.camera.position.x, this.camera.position.y, this.camera.position.z)
+        }
     }
+
     /**
      * Lock the games controls
      */

@@ -34,11 +34,6 @@ export default {
             username: '',
         }
     },
-    created() {
-        //temp
-        this.username = 'test'
-        this.login()
-    },
     methods: {
         login() {
             if (this.username != null && this.username != '') {

@@ -1,37 +1,36 @@
 import {
     Clock,
     WebGLRenderer,
-    Scene,
-    AmbientLight,
     PerspectiveCamera,
-    PointLight,
-    TextureLoader,
-    MathUtils,
-    Vector3,
-    DirectionalLight,
+    PointLight
 } from 'three'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js'
+import scene from './scene.js'
 import Controls from './controls.js'
-import Block from './block.js'
+import Multiplayer from './multiplayer.js'
 
 class TheGame {
+    static instance;
     clock = new Clock()
-    block = new Block()
 
     constructor(options) {
+        if(TheGame.instance) {
+            throw new Error('There can only be one instance of TheGame')
+        }
+
+        //Set the instance
+        TheGame.instance = this;
+
         this.renderer = new WebGLRenderer({
             canvas: options.canvas,
             alpha: true,
         })
-        this.renderer.setClearColor(0x000000, 1)
+        this.renderer.setClearColor(0x87ceeb, 1)
 
         this.canvas = this.renderer.domElement
-
-        this.scene = new Scene()
-        this.scene.add(new AmbientLight(0xffffff, 1))
 
         this.camera = new PerspectiveCamera(
             75,
@@ -39,17 +38,13 @@ class TheGame {
             1,
             1000
         )
-        this.camera.position.set(0, 0, 10) // Adjust as needed
         this.camera.add(new PointLight(0xffffff, 30))
-        this.scene.add(this.camera)
-
-        // Add a block
-        this.block.mesh.position.set(0, 0, 5)
-        this.scene.add(this.block.mesh)
+        this.camera.rotateX = 0.5
+        scene.add(this.camera)
 
         // Shaders
         this.composer = new EffectComposer(this.renderer)
-        this.renderPass = new RenderPass(this.scene, this.camera)
+        this.renderPass = new RenderPass(scene, this.camera)
         this.fxaaPass = new ShaderPass(FXAAShader)
 
         this.composer.addPass(this.renderPass)
@@ -57,6 +52,9 @@ class TheGame {
 
         //Controls
         this.controls = new Controls(this.camera, this.renderer, options)
+
+        // Start Multiplayer
+        this.multiplayer = new Multiplayer(options.username)
 
         // Bind the animate method to ensure the correct context
         this.animate = this.animate.bind(this)

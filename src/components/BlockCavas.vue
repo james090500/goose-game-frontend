@@ -1,10 +1,10 @@
 <template>
     <div class="h-100">
         <div
-            class="position-absolute h-100 w-100 d-flex justify-content-center align-items-center"
-            v-if="!locked"
+            class="position-absolute h-100 w-100 start-0 top-0 d-flex justify-content-center align-items-center pause-screen"
+            v-if="!locked" @click="lockControls"
         >
-            <div class="text-center" @click="lockControls">
+            <div class="text-center text-black border rounded shadow p-3">
                 <h1>Paused</h1>
                 <p>Click to unpause</p>
             </div>
@@ -13,10 +13,16 @@
     </div>
 </template>
 
+<style scoped>
+    .pause-screen {
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.5);
+    }
+</style>
+
 <script>
 import TheGame from '../three/index.js'
 import { mapState } from 'vuex'
-import { state } from '../socket.js'
 
 export default {
     data() {
@@ -28,6 +34,7 @@ export default {
     mounted() {
         this.theGame = new TheGame({
             canvas: document.getElementById('the_game'),
+            username: this.username,
             onLock: () => {
                 this.locked = true
             },
@@ -44,24 +51,8 @@ export default {
     unmounted() {
         this.theGame.dispose()
     },
-    watch: {
-        blocks: {
-            immediate: true,
-            handler() {
-                if (this.ctx != null) {
-                    this.update()
-                }
-            },
-        },
-    },
     computed: {
-        ...mapState(['me']),
-    },
-    props: {
-        blocks: {
-            type: Array,
-            required: true,
-        },
-    },
+        ...mapState(['username']),
+    }
 }
 </script>
