@@ -5,7 +5,9 @@ class Multiplayer {
     players = []
 
     constructor(username) {
-        const url = `http://${window.location.hostname}${import.meta.env.DEV ? ':3000' : ''}`
+        const url = import.meta.env.DEV ?
+        `http://${window.location.hostname}:3000`
+        : `https://mb-api.james090500.com`
 
         this.io = io(`${url}?username=${username}`)
 
