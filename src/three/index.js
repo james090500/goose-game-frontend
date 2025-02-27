@@ -1,15 +1,26 @@
-import { Clock, WebGLRenderer, PerspectiveCamera, PointLight } from 'three'
+import {
+    Clock,
+    WebGLRenderer,
+    PerspectiveCamera,
+    PointLight,
+    Scene,
+    Color,
+    AmbientLight,
+    HemisphereLight,
+    Fog,
+} from 'three'
 import Stats from 'three/addons/libs/stats.module.js'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js'
-import scene from './scene.js'
 import Controls from './controls.js'
 import Multiplayer from './multiplayer.js'
+import World from './world.js'
 
 class TheGame {
     static instance
+    options = null
     clock = new Clock()
 
     constructor(options) {
@@ -20,40 +31,59 @@ class TheGame {
         //Set the instance
         TheGame.instance = this
 
+        //Options
+        this.options = options
+
         //Stats
         this.stats = new Stats()
-        options.canvas.parentElement.appendChild(this.stats.dom)
+        this.options.canvas.parentElement.appendChild(this.stats.dom)
 
         this.renderer = new WebGLRenderer({
-            canvas: options.canvas,
+            canvas: this.options.canvas,
             alpha: true,
         })
 
         this.canvas = this.renderer.domElement
 
+        // Scene
+        this.scene = new Scene()
+        this.scene.background = new Color(0x99ddff)
+
+        //Lights
+        this.scene.add(new AmbientLight(0xffffff, 1))
+        this.scene.add(new HemisphereLight(0xffffbb, 0x080820, 2))
+
+        //Fog
+        this.scene.fog = new Fog(0x99ddff, 10, 100)
+
+        // Camera
         this.camera = new PerspectiveCamera(
             75,
             this.canvas.clientWidth / this.canvas.clientHeight,
-            1,
-            1000
+            0.1,
+            110
         )
         this.camera.add(new PointLight(0xffffff, 5))
         this.camera.position.y = 10
-        scene.add(this.camera)
+        this.scene.add(this.camera)
 
         // Shaders
         this.composer = new EffectComposer(this.renderer)
-        this.renderPass = new RenderPass(scene, this.camera)
+        this.renderPass = new RenderPass(this.scene, this.camera)
         this.fxaaPass = new ShaderPass(FXAAShader)
 
         this.composer.addPass(this.renderPass)
         this.composer.addPass(this.fxaaPass)
 
         //Controls
-        this.controls = new Controls(options)
+        this.controls = new Controls()
 
         // Start Multiplayer
-        this.multiplayer = new Multiplayer(options.username)
+        this.multiplayer = new Multiplayer()
+
+        // World
+        this.world = new World()
+        this.scene.add(this.world.getWorld())
 
         // Bind the animate method to ensure the correct context
         this.animate = this.animate.bind(this)
@@ -110,9 +140,22 @@ class TheGame {
     dispose() {
         this._dispose = true
 
+        //Disconnect socket
+        this.multiplayer.disconnect()
+
+        //Dispose the renderer
         this.renderer.dispose()
         this.composer.dispose()
         this.fxaaPass.dispose()
+
+        //Goodbye camera
+        this.camera.children.forEach((child) => {
+            child.dispose()
+        })
+        this.camera = null
+
+        // Goodbye
+        TheGame.instance = null
     }
 }
 

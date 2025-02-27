@@ -1,20 +1,24 @@
 import { io } from 'socket.io-client'
 import Player from './player.js'
+import TheGame from './index.js'
 
 class Multiplayer {
     players = []
 
-    constructor(username) {
+    constructor() {
         const url = import.meta.env.DEV
             ? `http://${window.location.hostname}:3000`
             : `https://mb-api.james090500.com`
 
-        this.io = io(`${url}?username=${username}`)
+        this.io = io(`${url}?username=${TheGame.instance.options.username}`)
 
         this.io.on('update', (data) => {
             this.me = this.io.id
             this.updatePlayers(data)
         })
+    }
+    disconnect() {
+        this.io.disconnect()
     }
     updatePosition(position) {
         this.io.emit('move', { x: position.x, y: position.y, z: position.z })
@@ -55,6 +59,14 @@ class Multiplayer {
                 )
             }
         })
+
+        const playerList = newPlayers.map((player) => {
+            return {
+                id: player.id,
+                username: player.username,
+            }
+        })
+        TheGame.instance.options.onUpdatePlayers(playerList)
     }
 }
 

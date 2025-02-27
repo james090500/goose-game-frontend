@@ -1,8 +1,9 @@
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js'
 import TheGame from './index.js'
-import { Euler, Vector3, Clock } from 'three'
+import { Euler, Vector3, Clock, Raycaster } from 'three'
 
 class Controls {
+    playerHeight = 2 // Height of player
     moveSpeed = 5 // Speed of movement
     jumpSpeed = 10 // Speed of jump
     jumpDuration = 0.5 // Duration of jump
@@ -15,7 +16,8 @@ class Controls {
         ShiftLeft: false,
     } // Movement keys
 
-    constructor(options) {
+    constructor() {
+        this.options = TheGame.instance.options
         this.camera = TheGame.instance.camera
         this.renderer = TheGame.instance.renderer
 
@@ -24,8 +26,8 @@ class Controls {
             this.camera,
             this.renderer.domElement
         )
-        this.controls.addEventListener('lock', options.onLock)
-        this.controls.addEventListener('unlock', options.onUnlock)
+        this.controls.addEventListener('lock', this.options.onLock)
+        this.controls.addEventListener('unlock', this.options.onUnlock)
         this.controls.lookSpeed = 0.1
 
         // Keyboard event listeners
@@ -52,6 +54,7 @@ class Controls {
         }, 50) // 50ms interval for 20 TPS
 
         // Jumping state
+        this.falling = false
         this.jumping = false
         this.jumpStartTime = 0
         this.clock = new Clock()
@@ -83,7 +86,7 @@ class Controls {
         if (this.keys.KeyD) {
             this.camera.position.add(right.clone().multiplyScalar(-moveSpeed)) // Right
         }
-        if (this.keys.Space) {
+        if (this.keys.Space && !this.jumping && !this.falling) {
             this.jump()
         }
 
@@ -99,19 +102,40 @@ class Controls {
             } else {
                 this.jumping = false
             }
-        } else {
-            if (this.camera.position.y - 1 > 1) {
-                this.camera.position.add(new Vector3(0, -moveSpeed * 2, 0)) // Down
-            } else if (this.camera.position.y < 1) {
-                this.camera.position.y = 10
-            }
         }
+
+        // Make the character fall
+        if (this.falling && !this.jumping) {
+            this.camera.position.add(new Vector3(0, -moveSpeed * 2, 0)) // Down
+        }
+
+        this.checkCollision()
     }
 
     // Initiate jump
     jump() {
         this.jumping = true
         this.jumpStartTime = this.clock.getElapsedTime()
+    }
+
+    checkCollision() {
+        const raycaster = new Raycaster()
+        const downVector = new Vector3(0, -1, 0)
+
+        raycaster.set(this.camera.position, downVector)
+        const intersects = raycaster.intersectObject(
+            TheGame.instance.world.getWorld()
+        )
+
+        if (intersects.length > 0) {
+            const terrainHeight = intersects[0].point.y + this.playerHeight
+            if (this.camera.position.y < terrainHeight) {
+                this.camera.position.y = terrainHeight // Prevent sinking
+                this.falling = false;
+            } else {
+                this.falling = true
+            }
+        }
     }
 
     /**
