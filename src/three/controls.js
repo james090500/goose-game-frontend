@@ -109,6 +109,7 @@ class Controls {
             this.camera.position.add(new Vector3(0, -moveSpeed * 2, 0)) // Down
         }
 
+        // Check collision with the floor
         this.checkCollision()
     }
 
@@ -131,7 +132,7 @@ class Controls {
             const terrainHeight = intersects[0].point.y + this.playerHeight
             if (this.camera.position.y < terrainHeight) {
                 this.camera.position.y = terrainHeight // Prevent sinking
-                this.falling = false;
+                this.falling = false
             } else {
                 this.falling = true
             }

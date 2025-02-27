@@ -4,9 +4,11 @@ import {
     Mesh,
     TextureLoader,
     RepeatWrapping,
-    Box3,
+    Vector3,
 } from 'three'
 import { ImprovedNoise } from 'three/addons/math/ImprovedNoise.js'
+import Tree from './tree.js'
+import TheGame from './index.js'
 
 class World {
     constructor() {
@@ -26,6 +28,7 @@ class World {
         const height = 10 // Height of mountains
         const noiseOffset = 439.3298492 // Random starting point Math.random() * 1000
 
+        // Height Map
         for (let i = 0; i < position.count; i++) {
             let x = position.getX(i) * scale
             let y = position.getY(i) * scale
@@ -41,6 +44,15 @@ class World {
             if (z < 0.3) z = 0 // Low noise = flat plains
 
             position.setZ(i, z * height)
+        }
+
+        // Trees
+        for (let x = -2048; x < 2048; x++) {
+            for (let z = -2048; z < 2048; z++) {
+                if (x % 100 == 0 && z % 100 == 0) {
+                    new Tree(x, 0, z);
+                }
+            }
         }
 
         // Ensure Three.js updates the geometry
