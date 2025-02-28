@@ -34,6 +34,12 @@ export default {
             username: '',
         }
     },
+    created() {
+        if (import.meta.env.DEV) {
+            this.username = Math.floor(Math.random() * Date.now()).toString(36)
+            this.login()
+        }
+    },
     methods: {
         login() {
             if (this.username != null && this.username != '') {

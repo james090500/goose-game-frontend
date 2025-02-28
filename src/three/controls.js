@@ -61,30 +61,30 @@ class Controls {
     }
     // Update movement
     updateMovement(delta) {
-        const direction = new Vector3()
-        this.camera.getWorldDirection(direction) // Get camera facing direction
-
-        // Calculate movement vectors
-        const forward = new Vector3(direction.x, 0, direction.z).normalize()
-        const right = new Vector3()
-            .crossVectors(this.camera.up, forward)
-            .normalize()
-
         // Normalize movement speed using delta
         const moveSpeed = this.moveSpeed * delta
 
-        // Apply movement
-        if (this.keys.KeyW) {
-            this.camera.position.add(forward.clone().multiplyScalar(moveSpeed)) // Forward
+        // Get directions
+       const forward = new Vector3(0, 0, -1)
+       this.camera.getWorldDirection(forward);
+
+        // Normalize camera directions
+        const backward = forward.clone().negate();
+        const left = forward.clone().cross(new Vector3(0, -1, 0)).normalize(); // Left is cross product of forward and up vector
+        const right = left.clone().negate(); // Right is opposite of left
+
+        // Update movement check based on direction
+        if (this.keys.KeyW && !this.checkCollision(forward)) {
+            this.camera.position.add(forward.clone().multiplyScalar(moveSpeed))
         }
-        if (this.keys.KeyS) {
-            this.camera.position.add(forward.clone().multiplyScalar(-moveSpeed)) // Backward
+        if (this.keys.KeyS && !this.checkCollision(backward)) {
+            this.camera.position.add(backward.clone().multiplyScalar(moveSpeed))
         }
-        if (this.keys.KeyA) {
-            this.camera.position.add(right.clone().multiplyScalar(moveSpeed)) // Left
+        if (this.keys.KeyA && !this.checkCollision(left)) {
+            this.camera.position.add(left.clone().multiplyScalar(moveSpeed))
         }
-        if (this.keys.KeyD) {
-            this.camera.position.add(right.clone().multiplyScalar(-moveSpeed)) // Right
+        if (this.keys.KeyD && !this.checkCollision(right)) {
+            this.camera.position.add(right.clone().multiplyScalar(moveSpeed))
         }
         if (this.keys.Space && !this.jumping && !this.falling) {
             this.jump()
@@ -106,11 +106,15 @@ class Controls {
 
         // Make the character fall
         if (this.falling && !this.jumping) {
+            //TODO velocity
             this.camera.position.add(new Vector3(0, -moveSpeed * 2, 0)) // Down
         }
+        this.checkGroundCollision()
 
-        // Check collision with the floor
-        this.checkCollision()
+        // Make sure player never leaves this world
+        if (this.camera.position.y < 0) {
+            this.camera.position.set(0, TheGame.instance.world.maxHeight, 0)
+        }
     }
 
     // Initiate jump
@@ -119,7 +123,14 @@ class Controls {
         this.jumpStartTime = this.clock.getElapsedTime()
     }
 
-    checkCollision() {
+    // Function to check movement collision
+    checkCollision(direction) {
+        const raycaster = new Raycaster(this.camera.position, direction, 0, 1);
+        const intersects = raycaster.intersectObjects(TheGame.instance.scene.children);
+        return intersects.length > 0;
+    }
+
+    checkGroundCollision() {
         const raycaster = new Raycaster()
         const downVector = new Vector3(0, -1, 0)
 

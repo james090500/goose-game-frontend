@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-10">
                 <div class="w-full vh-100 p-3">
-                    <BlockCavas />
+                    <GameCanvas />
                 </div>
             </div>
             <div class="col-2">
@@ -31,14 +31,14 @@
 
 <script>
 import { mapState } from 'vuex'
-import BlockCavas from '../components/BlockCavas.vue'
+import GameCanvas from '../components/GameCanvas.vue'
 
 export default {
     computed: {
         ...mapState(['username', 'players']),
     },
     components: {
-        BlockCavas,
+        GameCanvas,
     },
 }
 </script>

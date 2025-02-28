@@ -8,7 +8,7 @@ class Multiplayer {
     constructor() {
         const url = import.meta.env.DEV
             ? `http://${window.location.hostname}:3000`
-            : `https://mb-api.james090500.com`
+            : `https://goose-game-api.james090500.com`
 
         this.io = io(`${url}?username=${TheGame.instance.options.username}`)
 

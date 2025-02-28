@@ -2,27 +2,19 @@ import { Mesh, MeshNormalMaterial } from 'three'
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js'
 import HelvetikerFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
-import { MTLLoader } from 'three/addons/loaders/MTLLoader.js'
-import TheGame from '.'
+import TheGame from '..'
+import GameObjects from '../utils/gameobjects'
 
 class Player {
     constructor(id, username, position, rotation) {
         this.id = id
         this.username = username
 
-        // Load Goose
-        const mtlLoader = new MTLLoader()
-        mtlLoader.load('character/goose.mtl', (mtl) => {
-            mtl.preload()
-
-            const objLoader = new OBJLoader()
-            objLoader.setMaterials(mtl)
-            objLoader.load('character/goose.obj', (root) => {
-                root.scale.set(1.75, 1.75, -1.75)
-                this.character = root
-                TheGame.instance.scene.add(root)
-            })
+        // Load character
+        GameObjects.goose.then((goose) => {
+            this.character = goose
+            this.character.scale.set(1.75, 1.75, -1.75)
+            TheGame.instance.scene.add(this.character)
         })
 
         const loader = new FontLoader()

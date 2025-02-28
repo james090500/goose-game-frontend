@@ -54,17 +54,17 @@ class TheGame {
         this.scene.add(new HemisphereLight(0xffffbb, 0x080820, 2))
 
         //Fog
-        this.scene.fog = new Fog(0x99ddff, 10, 100)
+        this.scene.fog = new Fog(0x99ddff, 10, 512)
 
         // Camera
         this.camera = new PerspectiveCamera(
             75,
             this.canvas.clientWidth / this.canvas.clientHeight,
             0.1,
-            110
+            520
         )
         this.camera.add(new PointLight(0xffffff, 5))
-        this.camera.position.y = 10
+        this.camera.position.y = 30
         this.scene.add(this.camera)
 
         // Shaders
