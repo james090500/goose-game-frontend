@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client'
-import Player from './player.js'
+import Player from './entity/player.js'
 import TheGame from './index.js'
 
 class Multiplayer {

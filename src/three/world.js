@@ -6,8 +6,7 @@ import {
     RepeatWrapping,
 } from 'three'
 import { Noise } from 'noisejs'
-import Tree from './tree.js'
-import TheGame from './index.js'
+import Tree from './entity/tree.js'
 
 class World {
     maxHeight = 0
