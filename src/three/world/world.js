@@ -8,7 +8,7 @@ import {
     HemisphereLight,
     Fog,
     Color,
-    MathUtils
+    MathUtils,
 } from 'three'
 import TheGame from '..'
 
@@ -37,7 +37,7 @@ class World {
         TheGame.instance.scene.add(this.sun)
 
         // Ambient Light
-        this.ambientLight = new HemisphereLight(0xffffff, 0xffffff, 1);
+        this.ambientLight = new HemisphereLight(0xffffff, 0xffffff, 1)
         TheGame.instance.scene.add(this.ambientLight)
 
         const geometry = new PlaneGeometry(
@@ -96,46 +96,46 @@ class World {
         }
 
         //Get the light value of the world
-        const worldLight = this.getWorldLight(this.worldTime);
+        const worldLight = this.getWorldLight(this.worldTime)
         this.sun.intensity = worldLight
 
         // Get the colour of the sky and adjust lighting
-        const skyColor = new Color(this.getSkyColor(this.worldTime));
+        const skyColor = new Color(this.getSkyColor(this.worldTime))
         TheGame.instance.scene.background = skyColor
         TheGame.instance.scene.fog.color = skyColor
         this.ambientLight.skyColor = skyColor
         this.ambientLight.groundColor = skyColor
     }
     getWorldLight(tick) {
-        let transition;
+        let transition
 
         // Dawn (Midnight to Orange)
         if (tick >= 6000 && tick < 6500) {
-            transition = (tick - 6000) / 500;  // Normalize between 6000-6500
-            return MathUtils.lerp(1, 1.5, transition);
+            transition = (tick - 6000) / 500 // Normalize between 6000-6500
+            return MathUtils.lerp(1, 1.5, transition)
         }
         // Sunrise (Orange to Daylight)
         else if (tick >= 6500 && tick < 7000) {
-            transition = (tick - 6500) / 500;  // Normalize between 6500-7000
-            return MathUtils.lerp(1.5, 2, transition);
+            transition = (tick - 6500) / 500 // Normalize between 6500-7000
+            return MathUtils.lerp(1.5, 2, transition)
         }
         // Daylight (Static 2.0)
         else if (tick >= 7000 && tick < 18000) {
-            return 2;
+            return 2
         }
         // Sunset (Daylight to Orange)
         else if (tick >= 18000 && tick < 18500) {
-            transition = (tick - 18000) / 500;  // Normalize between 18000-18500
-            return MathUtils.lerp(2, 1.5, transition);
+            transition = (tick - 18000) / 500 // Normalize between 18000-18500
+            return MathUtils.lerp(2, 1.5, transition)
         }
         // Dusk (Orange to Midnight)
         else if (tick >= 18500 && tick < 19000) {
-            transition = (tick - 18500) / 500;  // Normalize between 18500-19000
-            return MathUtils.lerp(1.5, 1, transition);
+            transition = (tick - 18500) / 500 // Normalize between 18500-19000
+            return MathUtils.lerp(1.5, 1, transition)
         }
         // Night (Static 0.0)
         else {
-            return 0;
+            return 0
         }
     }
     getSkyColor(tick) {
@@ -144,7 +144,7 @@ class World {
         const blue = [153, 221, 255]
 
         const rgbToHex = (rgb) => {
-            return (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
+            return (rgb[0] << 16) | (rgb[1] << 8) | rgb[2]
         }
 
         const lerpRgbToHex = (start, end, tick, tickStart) => {
@@ -154,27 +154,23 @@ class World {
             const g = MathUtils.lerp(start[1], end[1], t)
             const b = MathUtils.lerp(start[2], end[2], t)
 
-            return rgbToHex([
-                Math.round(r),
-                Math.round(g),
-                Math.round(b)
-            ])
+            return rgbToHex([Math.round(r), Math.round(g), Math.round(b)])
         }
 
         //Dawn
-        if(tick >= 6000 && tick < 6500) {
+        if (tick >= 6000 && tick < 6500) {
             return lerpRgbToHex(midnight, orange, tick, 6000)
-        } else if(tick >= 6500 && tick < 7000) {
+        } else if (tick >= 6500 && tick < 7000) {
             return lerpRgbToHex(orange, blue, tick, 6500)
-        //Daylight
-        } else if(tick >= 7000 && tick < 18000) {
+            //Daylight
+        } else if (tick >= 7000 && tick < 18000) {
             return rgbToHex(blue)
-        //Evening
-        } else if(tick >= 18000 && tick < 18500) {
+            //Evening
+        } else if (tick >= 18000 && tick < 18500) {
             return lerpRgbToHex(blue, orange, tick, 18000)
-        } else if(tick >= 18500 && tick < 19000) {
+        } else if (tick >= 18500 && tick < 19000) {
             return lerpRgbToHex(orange, midnight, tick, 18500)
-        //Night
+            //Night
         } else {
             return rgbToHex(midnight)
         }
