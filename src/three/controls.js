@@ -6,7 +6,7 @@ class Controls {
     playerHeight = 2 // Height of player
     moveSpeed = 5 // Speed of movement
     jumpSpeed = 10 // Speed of jump
-    jumpDuration = 0.5 // Duration of jump
+    jumpDuration = 0.4 // Duration of jump
     keys = {
         KeyW: false,
         KeyS: false,
@@ -56,12 +56,11 @@ class Controls {
     }
     // Update movement
     updateMovement(delta) {
-        // Normalize movement speed using delta
-        const moveSpeed = this.moveSpeed * delta
-
         // Get directions
         const forward = new Vector3(0, 0, -1)
         this.camera.getWorldDirection(forward)
+        forward.y = 0
+        forward.normalize()
 
         // Normalize camera directions
         const backward = forward.clone().negate()
@@ -70,6 +69,13 @@ class Controls {
             .cross(new Vector3(0, -1, 0))
             .normalize() // Left is cross product of forward and up vector
         const right = left.clone().negate() // Right is opposite of left
+
+        //Calculate running
+        let moveSpeed = this.moveSpeed * delta
+        if(this.keys.ShiftLeft) {
+            // Normalize movement speed using delta
+            moveSpeed = (this.moveSpeed + 2) * delta
+        }
 
         // Update movement check based on direction
         if (this.keys.KeyW && !this.checkCollision(forward)) {
@@ -105,7 +111,7 @@ class Controls {
         // Make the character fall
         if (this.falling && !this.jumping) {
             //TODO velocity
-            this.camera.position.add(new Vector3(0, -moveSpeed * 2, 0)) // Down
+            this.camera.position.add(new Vector3(0, -this.jumpSpeed * delta, 0)) // Down
         }
         this.checkGroundCollision()
 
@@ -141,7 +147,7 @@ class Controls {
 
         if (intersects.length > 0) {
             const terrainHeight = intersects[0].point.y + this.playerHeight
-            if (this.camera.position.y < terrainHeight) {
+            if (this.camera.position.y <= terrainHeight) {
                 this.camera.position.y = terrainHeight // Prevent sinking
                 this.falling = false
             } else {

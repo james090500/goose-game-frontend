@@ -12,7 +12,9 @@ export default defineConfig({
         },
     },
     define: {
-        "__BUILD_HASH__": JSON.stringify(process.env.CF_PAGES_COMMIT_SHA ?? "DEV")
+        __BUILD_HASH__: JSON.stringify(
+            process.env.CF_PAGES_COMMIT_SHA ?? 'DEV'
+        ),
     },
     server: {
         hmr: false,

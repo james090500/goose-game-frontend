@@ -36,8 +36,8 @@ class Terrain {
             let height = noiseResult * 50
 
             // Set max world height
-            if (this.maxHeight < height) {
-                this.maxHeight = height
+            if (TheGame.instance.world.maxHeight < height) {
+                TheGame.instance.world.maxHeight = height
             }
 
             // Set final position

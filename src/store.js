@@ -3,7 +3,7 @@ import { createStore } from 'vuex'
 export default createStore({
     state() {
         return {
-            game_version: __BUILD_HASH__,
+            game_version: __BUILD_HASH__.slice(0, 7),
             username: null,
             players: [],
         }
