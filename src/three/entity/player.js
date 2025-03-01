@@ -12,7 +12,7 @@ class Player {
 
         // Load character
         GameObjects.goose.then((goose) => {
-            this.character = goose
+            this.character = goose.clone()
             this.character.scale.set(1.75, 1.75, -1.75)
             TheGame.instance.scene.add(this.character)
         })
