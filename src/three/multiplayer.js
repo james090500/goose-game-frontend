@@ -16,6 +16,10 @@ class Multiplayer {
             this.me = this.io.id
             this.updatePlayers(data)
         })
+
+        this.io.on('time', (data) => {
+            TheGame.instance.world.worldTime = data
+        })
     }
     disconnect() {
         this.io.disconnect()
