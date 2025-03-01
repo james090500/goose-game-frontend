@@ -21,7 +21,14 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    Game Version: <strong>{{ game_version }}</strong>
+                    Game Version:
+                    <strong
+                        ><a
+                            :href="`https://github.com/james090500/goose-game-frontend/tree/${game_version}`"
+                            target="_blank"
+                            >{{ game_version }}</a
+                        ></strong
+                    >
                 </div>
             </div>
         </div>

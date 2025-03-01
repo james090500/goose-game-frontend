@@ -8,7 +8,14 @@
             </div>
             <div class="col-2">
                 <h4 class="mt-3">Players</h4>
-                Game Version: <strong>{{ game_version }}</strong>
+                Game Version:
+                <strong
+                    ><a
+                        :href="`https://github.com/james090500/goose-game-frontend/tree/${game_version}`"
+                        target="_blank"
+                        >{{ game_version }}</a
+                    ></strong
+                >
                 <hr />
                 <div
                     class="row border rounded p-2 m-1"

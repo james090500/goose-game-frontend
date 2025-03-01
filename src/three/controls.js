@@ -72,7 +72,7 @@ class Controls {
 
         //Calculate running
         let moveSpeed = this.moveSpeed * delta
-        if(this.keys.ShiftLeft) {
+        if (this.keys.ShiftLeft) {
             // Normalize movement speed using delta
             moveSpeed = (this.moveSpeed + 2) * delta
         }
