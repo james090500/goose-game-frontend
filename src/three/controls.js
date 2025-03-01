@@ -48,11 +48,6 @@ class Controls {
         this.previousPosition.copy(this.camera.position)
         this.previousRotation.copy(this.camera.rotation)
 
-        // Throttle the emit rate to 20 TPS
-        this.emitInterval = setInterval(() => {
-            this.emitMovement()
-        }, 50) // 50ms interval for 20 TPS
-
         // Jumping state
         this.falling = false
         this.jumping = false
@@ -65,13 +60,16 @@ class Controls {
         const moveSpeed = this.moveSpeed * delta
 
         // Get directions
-       const forward = new Vector3(0, 0, -1)
-       this.camera.getWorldDirection(forward);
+        const forward = new Vector3(0, 0, -1)
+        this.camera.getWorldDirection(forward)
 
         // Normalize camera directions
-        const backward = forward.clone().negate();
-        const left = forward.clone().cross(new Vector3(0, -1, 0)).normalize(); // Left is cross product of forward and up vector
-        const right = left.clone().negate(); // Right is opposite of left
+        const backward = forward.clone().negate()
+        const left = forward
+            .clone()
+            .cross(new Vector3(0, -1, 0))
+            .normalize() // Left is cross product of forward and up vector
+        const right = left.clone().negate() // Right is opposite of left
 
         // Update movement check based on direction
         if (this.keys.KeyW && !this.checkCollision(forward)) {
@@ -125,9 +123,11 @@ class Controls {
 
     // Function to check movement collision
     checkCollision(direction) {
-        const raycaster = new Raycaster(this.camera.position, direction, 0, 1);
-        const intersects = raycaster.intersectObjects(TheGame.instance.scene.children);
-        return intersects.length > 0;
+        const raycaster = new Raycaster(this.camera.position, direction, 0, 1)
+        const intersects = raycaster.intersectObjects(
+            TheGame.instance.scene.children
+        )
+        return intersects.length > 0
     }
 
     checkGroundCollision() {

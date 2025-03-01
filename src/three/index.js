@@ -2,12 +2,11 @@ import {
     Clock,
     WebGLRenderer,
     PerspectiveCamera,
-    PointLight,
     Scene,
     Color,
-    AmbientLight,
-    HemisphereLight,
+    DirectionalLight,
     Fog,
+    AmbientLight,
 } from 'three'
 import Stats from 'three/addons/libs/stats.module.js'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
@@ -16,11 +15,13 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js'
 import Controls from './controls.js'
 import Multiplayer from './multiplayer.js'
-import World from './world.js'
+import World from './world/world.js'
+import Terrain from './world/terrain.js'
 
 class TheGame {
     static instance
     options = null
+    gameLoopInterval = null
     clock = new Clock()
 
     constructor(options) {
@@ -47,14 +48,6 @@ class TheGame {
 
         // Scene
         this.scene = new Scene()
-        this.scene.background = new Color(0x99ddff)
-
-        //Lights
-        this.scene.add(new AmbientLight(0xffffff, 1))
-        this.scene.add(new HemisphereLight(0xffffbb, 0x080820, 2))
-
-        //Fog
-        this.scene.fog = new Fog(0x99ddff, 10, 512)
 
         // Camera
         this.camera = new PerspectiveCamera(
@@ -63,7 +56,6 @@ class TheGame {
             0.1,
             520
         )
-        this.camera.add(new PointLight(0xffffff, 5))
         this.camera.position.y = 30
         this.scene.add(this.camera)
 
@@ -83,12 +75,16 @@ class TheGame {
 
         // World
         this.world = new World()
+        new Terrain()
         this.scene.add(this.world.getWorld())
 
-        // Bind the animate method to ensure the correct context
-        this.animate = this.animate.bind(this)
+        // Start game loop
+        // 50ms, aka 20 TPS
+        this.gameLoop = this.gameLoop.bind(this)
+        this.gameLoopInterval = setInterval(this.gameLoop, 50)
 
         // Start the animation
+        this.animate = this.animate.bind(this)
         this.animate()
     }
     /**
@@ -134,11 +130,20 @@ class TheGame {
         // FPS Stats
         this.stats.update()
     }
+
+    gameLoop() {
+        this.controls.emitMovement()
+        this.world.updateTime()
+    }
+
     /**
      * Dispose
      */
     dispose() {
         this._dispose = true
+
+        // Clear interval
+        clearInterval(this.gameLoopInterval)
 
         //Disconnect socket
         this.multiplayer.disconnect()
