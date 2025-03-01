@@ -11,6 +11,9 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url)),
         },
     },
+    define: {
+        "__BUILD_HASH__": JSON.stringify(process.env.CF_PAGES_COMMIT_SHA ?? "DEV")
+    },
     server: {
         hmr: false,
     },
