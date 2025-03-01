@@ -2,7 +2,7 @@
     <div class="row justify-content-center vh-100">
         <div class="col-6 text-center align-content-center">
             <div>
-                <h1>Welcome to the game!</h1>
+                <h1>Welcome to Goose Game!</h1>
                 <div class="row">
                     <div class="col-8">
                         <input

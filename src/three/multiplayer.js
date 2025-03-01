@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client'
 import Player from './entity/player.js'
-import TheGame from './index.js'
+import GooseGame from './index.js'
 
 class Multiplayer {
     players = []
@@ -10,7 +10,7 @@ class Multiplayer {
             ? `http://${window.location.hostname}:3000`
             : `https://goose-game-api.james090500.com`
 
-        this.io = io(`${url}?username=${TheGame.instance.options.username}`)
+        this.io = io(`${url}?username=${GooseGame.instance.options.username}`)
 
         this.io.on('update', (data) => {
             this.me = this.io.id
@@ -18,7 +18,7 @@ class Multiplayer {
         })
 
         this.io.on('time', (data) => {
-            TheGame.instance.world.worldTime = data
+            GooseGame.instance.world.worldTime = data
         })
     }
     disconnect() {
@@ -70,7 +70,7 @@ class Multiplayer {
                 username: player.username,
             }
         })
-        TheGame.instance.options.onUpdatePlayers(playerList)
+        GooseGame.instance.options.onUpdatePlayers(playerList)
     }
 }
 

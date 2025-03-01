@@ -18,19 +18,19 @@ import Multiplayer from './multiplayer.js'
 import World from './world/world.js'
 import Terrain from './world/terrain.js'
 
-class TheGame {
+class GooseGame {
     static instance
     options = null
     gameLoopInterval = null
     clock = new Clock()
 
     constructor(options) {
-        if (TheGame.instance) {
-            throw new Error('There can only be one instance of TheGame')
+        if (GooseGame.instance) {
+            throw new Error('There can only be one instance of GooseGame')
         }
 
         //Set the instance
-        TheGame.instance = this
+        GooseGame.instance = this
 
         //Options
         this.options = options
@@ -160,10 +160,10 @@ class TheGame {
         this.camera = null
 
         // Goodbye
-        TheGame.instance = null
+        GooseGame.instance = null
     }
 }
 
-window.TheGame = TheGame
+window.GooseGame = GooseGame
 
-export default TheGame
+export default GooseGame

@@ -10,7 +10,7 @@ import {
     Color,
     MathUtils,
 } from 'three'
-import TheGame from '..'
+import GooseGame from '..'
 
 class World {
     maxHeight = 0
@@ -27,18 +27,18 @@ class World {
         })
 
         // Sky
-        TheGame.instance.scene.background = new Color(0x99ddff)
+        GooseGame.instance.scene.background = new Color(0x99ddff)
 
         // Fog
-        TheGame.instance.scene.fog = new Fog(0x99ddff, 256, 512)
+        GooseGame.instance.scene.fog = new Fog(0x99ddff, 256, 512)
 
         // The Sun
         this.sun = new DirectionalLight(0xffffff, 3)
-        TheGame.instance.scene.add(this.sun)
+        GooseGame.instance.scene.add(this.sun)
 
         // Ambient Light
         this.ambientLight = new HemisphereLight(0xffffff, 0xffffff, 1)
-        TheGame.instance.scene.add(this.ambientLight)
+        GooseGame.instance.scene.add(this.ambientLight)
 
         const geometry = new PlaneGeometry(
             this.worldSize,
@@ -101,8 +101,8 @@ class World {
 
         // Get the colour of the sky and adjust lighting
         const skyColor = new Color(this.getSkyColor(this.worldTime))
-        TheGame.instance.scene.background = skyColor
-        TheGame.instance.scene.fog.color = skyColor
+        GooseGame.instance.scene.background = skyColor
+        GooseGame.instance.scene.fog.color = skyColor
         this.ambientLight.skyColor = skyColor
         this.ambientLight.groundColor = skyColor
     }

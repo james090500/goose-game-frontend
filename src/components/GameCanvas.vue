@@ -26,19 +26,19 @@
 </style>
 
 <script>
-import TheGame from '../three/index.js'
+import GooseGame from '../three/index.js'
 import store from '@/store'
 import { mapState } from 'vuex'
 
 export default {
     data() {
         return {
-            theGame: null,
+            GooseGame: null,
             locked: false,
         }
     },
     mounted() {
-        this.theGame = new TheGame({
+        this.GooseGame = new GooseGame({
             canvas: document.getElementById('the_game'),
             username: this.username,
             onLock: () => {
@@ -56,15 +56,15 @@ export default {
     },
     methods: {
         lockControls() {
-            this.theGame.controls.lock()
+            this.GooseGame.controls.lock()
         },
         disconnect() {
             store.commit('doLogin', null)
             store.commit('updatePlayers', [])
         },
         dispose() {
-            this.theGame.dispose()
-            this.theGame = null
+            this.GooseGame.dispose()
+            this.GooseGame = null
             this.disconnect()
         },
     },

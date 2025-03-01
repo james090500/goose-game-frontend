@@ -1,5 +1,5 @@
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js'
-import TheGame from './index.js'
+import GooseGame from './index.js'
 import { Euler, Vector3, Clock, Raycaster } from 'three'
 
 class Controls {
@@ -17,9 +17,9 @@ class Controls {
     } // Movement keys
 
     constructor() {
-        this.options = TheGame.instance.options
-        this.camera = TheGame.instance.camera
-        this.renderer = TheGame.instance.renderer
+        this.options = GooseGame.instance.options
+        this.camera = GooseGame.instance.camera
+        this.renderer = GooseGame.instance.renderer
 
         // Controls
         this.controls = new PointerLockControls(
@@ -117,7 +117,7 @@ class Controls {
 
         // Make sure player never leaves this world
         if (this.camera.position.y < 0) {
-            this.camera.position.set(0, TheGame.instance.world.maxHeight, 0)
+            this.camera.position.set(0, GooseGame.instance.world.maxHeight, 0)
         }
     }
 
@@ -131,7 +131,7 @@ class Controls {
     checkCollision(direction) {
         const raycaster = new Raycaster(this.camera.position, direction, 0, 1)
         const intersects = raycaster.intersectObjects(
-            TheGame.instance.scene.children
+            GooseGame.instance.scene.children
         )
         return intersects.length > 0
     }
@@ -142,7 +142,7 @@ class Controls {
 
         raycaster.set(this.camera.position, downVector)
         const intersects = raycaster.intersectObject(
-            TheGame.instance.world.getWorld()
+            GooseGame.instance.world.getWorld()
         )
 
         if (intersects.length > 0) {
@@ -163,13 +163,13 @@ class Controls {
     emitMovement() {
         if (!this.camera.position.equals(this.previousPosition)) {
             const clonedPosition = this.camera.position.clone()
-            TheGame.instance.multiplayer.updatePosition(clonedPosition)
+            GooseGame.instance.multiplayer.updatePosition(clonedPosition)
             this.previousPosition.copy(this.camera.position)
         }
 
         if (!this.camera.rotation.equals(this.previousRotation)) {
             const clonedRotation = this.camera.rotation.clone()
-            TheGame.instance.multiplayer.updateRotation(clonedRotation)
+            GooseGame.instance.multiplayer.updateRotation(clonedRotation)
             this.previousRotation.copy(this.camera.rotation)
         }
     }

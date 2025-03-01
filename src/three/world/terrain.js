@@ -1,6 +1,6 @@
 import { Noise } from 'noisejs'
 import Tree from '../entity/tree.js'
-import TheGame from '../index.js'
+import GooseGame from '../index.js'
 
 class Terrain {
     constructor() {
@@ -12,7 +12,7 @@ class Terrain {
     }
     generateWorld() {
         const position =
-            TheGame.instance.world.getWorld().geometry.attributes.position
+            GooseGame.instance.world.getWorld().geometry.attributes.position
 
         // Height Map
         for (let i = 0; i < position.count; i++) {
@@ -20,8 +20,8 @@ class Terrain {
             let x = position.getX(i)
             let y = position.getY(i)
 
-            let nx = x / TheGame.instance.world.worldSize - 0.5
-            let ny = y / TheGame.instance.world.worldSize - 0.5
+            let nx = x / GooseGame.instance.world.worldSize - 0.5
+            let ny = y / GooseGame.instance.world.worldSize - 0.5
 
             // Get Perlin noise value
             let noiseResult = this.worldNoise.perlin2(
@@ -36,8 +36,8 @@ class Terrain {
             let height = noiseResult * 50
 
             // Set max world height
-            if (TheGame.instance.world.maxHeight < height) {
-                TheGame.instance.world.maxHeight = height
+            if (GooseGame.instance.world.maxHeight < height) {
+                GooseGame.instance.world.maxHeight = height
             }
 
             // Set final position
@@ -48,7 +48,7 @@ class Terrain {
         position.needsUpdate = true
     }
     generateTrees() {
-        const worldSize = TheGame.instance.world.worldSize
+        const worldSize = GooseGame.instance.world.worldSize
 
         for (let x = 0; x < worldSize; x++) {
             for (let z = 0; z < worldSize; z++) {
@@ -69,7 +69,7 @@ class Terrain {
                 noiseResult = (noiseResult + 1) / 2
 
                 if (noiseResult > 0.85) {
-                    let y = TheGame.instance.world.getHeight(worldX, worldZ)
+                    let y = GooseGame.instance.world.getHeight(worldX, worldZ)
                     new Tree(worldX, y, worldZ)
                 }
             }

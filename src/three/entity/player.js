@@ -2,7 +2,7 @@ import { Mesh, MeshNormalMaterial } from 'three'
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js'
 import HelvetikerFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
-import TheGame from '..'
+import GooseGame from '..'
 import GameObjects from '../utils/gameobjects'
 
 class Player {
@@ -14,7 +14,7 @@ class Player {
         GameObjects.goose.then((goose) => {
             this.character = goose.clone()
             this.character.scale.set(1.75, 1.75, -1.75)
-            TheGame.instance.scene.add(this.character)
+            GooseGame.instance.scene.add(this.character)
         })
 
         const loader = new FontLoader()
@@ -35,7 +35,7 @@ class Player {
         this.setPosition(position)
         this.setRotation(rotation)
 
-        TheGame.instance.scene.add(this.nametag)
+        GooseGame.instance.scene.add(this.nametag)
     }
 
     setPosition(position) {
@@ -53,10 +53,10 @@ class Player {
     }
 
     dispose() {
-        TheGame.instance.scene.remove(this.character)
+        GooseGame.instance.scene.remove(this.character)
         // this.mesh.geometry.dispose()
 
-        TheGame.instance.scene.remove(this.nametag)
+        GooseGame.instance.scene.remove(this.nametag)
         this.nametag.geometry.dispose()
         this.nametag.material.dispose()
     }
