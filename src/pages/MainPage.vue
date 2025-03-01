@@ -20,6 +20,9 @@
                         </div>
                     </div>
                 </div>
+                <div class="mt-2">
+                    Game Version: <strong>{{ game_version }}</strong>
+                </div>
             </div>
         </div>
     </div>
@@ -27,6 +30,7 @@
 
 <script>
 import store from '@/store'
+import { mapState } from 'vuex'
 
 export default {
     data() {
@@ -46,6 +50,9 @@ export default {
                 store.commit('doLogin', this.username)
             }
         },
+    },
+    computed: {
+        ...mapState(['game_version']),
     },
 }
 </script>

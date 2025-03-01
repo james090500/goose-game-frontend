@@ -8,6 +8,7 @@
             </div>
             <div class="col-2">
                 <h4 class="mt-3">Players</h4>
+                Game Version: <strong>{{ game_version }}</strong>
                 <hr />
                 <div
                     class="row border rounded p-2 m-1"
@@ -35,7 +36,7 @@ import GameCanvas from '../components/GameCanvas.vue'
 
 export default {
     computed: {
-        ...mapState(['username', 'players']),
+        ...mapState(['game_version', 'username', 'players']),
     },
     components: {
         GameCanvas,
