@@ -22,7 +22,7 @@ class Multiplayer {
             GooseGame.instance.world.maxHeight = data.maxHeight
 
             GooseGame.instance.world.createWorld(data.terrain);
-            GooseGame.instance.world.setTrees(data.trees)
+            GooseGame.instance.world.createTrees(data.trees)
         })
 
         this.io.on('time', (data) => {

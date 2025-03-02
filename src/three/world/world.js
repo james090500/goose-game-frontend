@@ -10,6 +10,7 @@ import {
     Float32BufferAttribute
 } from 'three'
 import Sea from './sea'
+import Tree from '../entity/tree.js'
 import Textures from '../utils/textures.js'
 import GooseGame from '..'
 
@@ -111,6 +112,17 @@ class World {
 
         GooseGame.instance.scene.add(this.mesh)
         new Sea()
+    }
+    createTrees(trees) {
+        for(let i = 0; i < trees.length; i += 3) {
+            const x = trees[i]
+            const y = trees[i + 1]
+            const z = trees[i + 2]
+
+            console.log(x, y, z)
+
+            new Tree(x, y, z)
+        }
     }
     getWorld() {
         return this.mesh
