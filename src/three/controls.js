@@ -1,6 +1,14 @@
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js'
 import GooseGame from './index.js'
-import { Euler, Vector3, Clock, Raycaster } from 'three'
+import {
+    Euler,
+    Vector3,
+    Clock,
+    Raycaster,
+    Mesh,
+    PlaneGeometry,
+    MeshBasicMaterial,
+} from 'three'
 
 class Controls {
     playerHeight = 2 // Height of player
@@ -42,6 +50,19 @@ class Controls {
             }
         })
 
+        this.waterOverlay = new Mesh(
+            new PlaneGeometry(2, 2),
+            new MeshBasicMaterial({
+                color: 0x006994,
+                transparent: true,
+                opacity: 0.75,
+                visible: false,
+                depthWrite: false,
+            })
+        )
+        this.waterOverlay.position.set(0, 0, -1) // Slightly in front of the camera
+        this.camera.add(this.waterOverlay) // Attach it to the camera
+
         // Store the previous position and rotation
         this.previousPosition = new Vector3()
         this.previousRotation = new Euler()
@@ -72,9 +93,10 @@ class Controls {
 
         //Calculate running
         let moveSpeed = this.moveSpeed * delta
-        if (this.keys.ShiftLeft) {
-            // Normalize movement speed using delta
+        if (this.keys.ShiftLeft && !this.swimming) {
             moveSpeed = (this.moveSpeed + 2) * delta
+        } else if (this.swimming) {
+            moveSpeed = (this.moveSpeed - 2) * delta
         }
 
         // Update movement check based on direction
@@ -114,6 +136,15 @@ class Controls {
             this.camera.position.add(new Vector3(0, -this.jumpSpeed * delta, 0)) // Down
         }
         this.checkGroundCollision()
+
+        //Check if swimming
+        if (this.camera.position.y < GooseGame.instance.world.seaHeight) {
+            this.waterOverlay.material.visible = true
+            this.swimming = true
+        } else {
+            this.waterOverlay.material.visible = false
+            this.swimming = false
+        }
 
         // Make sure player never leaves this world
         if (this.camera.position.y < 0) {

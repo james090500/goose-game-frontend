@@ -30,7 +30,7 @@ class Player {
             new MeshNormalMaterial()
         )
         this.nametag.geometry.center()
-        this.nametag.scale.set(-1, 1, 1)
+        this.nametag.scale.set(1, 1, 1)
 
         this.setPosition(position)
         this.setRotation(rotation)
@@ -40,16 +40,17 @@ class Player {
 
     setPosition(position) {
         this.nametag.position.set(position.x, position.y + 0.5, position.z)
+        this.nametag.lookAt(GooseGame.instance.camera.position)
         if (this.character) {
             this.character.position.set(position.x, position.y - 2, position.z)
         }
     }
 
     setRotation(rotation) {
+        this.nametag.lookAt(GooseGame.instance.camera.position)
         if (this.character) {
             this.character.rotation.set(rotation.x, rotation.y, rotation.z)
         }
-        this.nametag.rotation.set(rotation.x, rotation.y, rotation.z)
     }
 
     dispose() {

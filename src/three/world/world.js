@@ -13,6 +13,7 @@ import {
 import GooseGame from '..'
 
 class World {
+    seaHeight = 15
     maxHeight = 0
     worldSize = 1024
     worldTime = 6000
@@ -20,10 +21,11 @@ class World {
     constructor() {
         //Ground
         let loader = new TextureLoader()
-        const texture = loader.load('grass.png', function (texture) {
+        const grassTexture = loader.load('grass.png', (texture) => {
             texture.wrapS = texture.wrapT = RepeatWrapping
-            texture.offset.set(0, 0)
-            texture.repeat.set(32, 32)
+        })
+        const sandTexture = loader.load('sand.png', (texture) => {
+            texture.wrapS = texture.wrapT = RepeatWrapping
         })
 
         // Sky
@@ -50,9 +52,64 @@ class World {
         this.world = new Mesh(
             geometry,
             new MeshStandardMaterial({
-                map: texture,
+                map: grassTexture,
             })
         )
+
+        this.world.material.onBeforeCompile = (shader) => {
+            shader.uniforms.sandTexture = { value: sandTexture }
+            shader.uniforms.grassTexture = { value: grassTexture }
+            shader.uniforms.heightThreshold = {
+                value: GooseGame.instance.world.seaHeight + 2,
+            } // Change this value to control blending
+
+            // Modify vertex shader: Pass position & UV to fragment shader
+            shader.vertexShader = shader.vertexShader.replace(
+                '#include <common>',
+                `
+                #include <common>
+                varying vec2 vUv;
+                varying vec3 vPosition;
+                `
+            )
+
+            shader.vertexShader = shader.vertexShader.replace(
+                '#include <uv_vertex>',
+                `
+                #include <uv_vertex>
+                vUv = uv * 32.0; // Pass UV coordinates
+                vPosition = position; // Pass world position
+                `
+            )
+
+            // Modify fragment shader: Use both textures & blend by height
+            shader.fragmentShader = shader.fragmentShader.replace(
+                '#include <common>',
+                `
+                #include <common>
+                uniform sampler2D sandTexture;
+                uniform sampler2D grassTexture;
+                uniform float heightThreshold;
+                varying vec2 vUv;
+                varying vec3 vPosition;
+                `
+            )
+
+            shader.fragmentShader = shader.fragmentShader.replace(
+                '#include <map_fragment>',
+                `
+                vec4 sandColor = texture2D(sandTexture, vUv);
+                vec4 grassColor = texture2D(grassTexture, vUv);
+
+                // Blend based on height (vPosition.z)
+                //float blendFactor = step(heightThreshold, vPosition.z);
+                float blendFactor = smoothstep(heightThreshold - 0.5, heightThreshold + 0.5, vPosition.z);
+                vec4 finalColor = mix(sandColor, grassColor, blendFactor);
+
+                diffuseColor = finalColor;
+                `
+            )
+        }
 
         this.world.rotation.x = -Math.PI / 2
     }

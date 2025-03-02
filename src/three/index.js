@@ -1,13 +1,4 @@
-import {
-    Clock,
-    WebGLRenderer,
-    PerspectiveCamera,
-    Scene,
-    Color,
-    DirectionalLight,
-    Fog,
-    AmbientLight,
-} from 'three'
+import { Clock, WebGLRenderer, PerspectiveCamera, Scene } from 'three'
 import Stats from 'three/addons/libs/stats.module.js'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
@@ -17,6 +8,7 @@ import Controls from './controls.js'
 import Multiplayer from './multiplayer.js'
 import World from './world/world.js'
 import Terrain from './world/terrain.js'
+import Sea from './world/sea.js'
 
 class GooseGame {
     static instance
@@ -57,6 +49,8 @@ class GooseGame {
             520
         )
         this.camera.position.y = 30
+        this.camera.position.x = 250
+        this.camera.position.z = 250
         this.scene.add(this.camera)
 
         // Shaders
@@ -76,6 +70,7 @@ class GooseGame {
         // World
         this.world = new World()
         new Terrain()
+        new Sea()
         this.scene.add(this.world.getWorld())
 
         // Start game loop
