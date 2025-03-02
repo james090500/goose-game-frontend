@@ -51,13 +51,14 @@ class Controls {
         })
 
         this.waterOverlay = new Mesh(
-            new PlaneGeometry(2, 2),
+            new PlaneGeometry(3, 2),
             new MeshBasicMaterial({
                 color: 0x006994,
                 transparent: true,
                 opacity: 0.75,
                 visible: false,
                 depthWrite: false,
+                depthTest: false
             })
         )
         this.waterOverlay.position.set(0, 0, -1) // Slightly in front of the camera
