@@ -17,6 +17,9 @@ export default defineConfig({
         ),
     },
     server: {
+        allowedHosts: [
+            'localhost.test'
+        ],
         hmr: false,
     },
 })

@@ -36,11 +36,14 @@ class Multiplayer {
     }
     updatePlayers(newPlayers) {
         // Remove players that are not in the newPlayers array
-        this.players.forEach((player) => {
+        this.players = this.players.filter((player) => {
             if (!newPlayers.some((newPlayer) => newPlayer.id === player.id)) {
-                player.dispose() // Dispose the player before filtering
+                player.dispose();
+                return false; // Remove from this.players
             }
-        })
+            return true; // Keep in this.players
+        });
+
 
         // Update existing players or add new players
         newPlayers.forEach((player) => {

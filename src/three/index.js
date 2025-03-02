@@ -9,6 +9,7 @@ import Multiplayer from './multiplayer.js'
 import World from './world/world.js'
 import Terrain from './world/terrain.js'
 import Sea from './world/sea.js'
+import Debug from './gui/debug.js'
 
 class GooseGame {
     static instance
@@ -73,6 +74,9 @@ class GooseGame {
         new Sea()
         this.scene.add(this.world.getWorld())
 
+        // Debug
+        this.debug = new Debug()
+
         // Start game loop
         // 50ms, aka 20 TPS
         this.gameLoop = this.gameLoop.bind(this)
@@ -127,6 +131,7 @@ class GooseGame {
     }
 
     gameLoop() {
+        this.debug.update()
         this.controls.emitMovement()
         this.world.updateTime()
     }

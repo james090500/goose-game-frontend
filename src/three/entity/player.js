@@ -1,5 +1,4 @@
-import { Mesh, MeshNormalMaterial } from 'three'
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'
+import { Mesh, MeshBasicMaterial, MeshNormalMaterial, PlaneGeometry, ShapeGeometry, Group, Box3 } from 'three'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js'
 import HelvetikerFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
 import GooseGame from '..'
@@ -9,57 +8,91 @@ class Player {
     constructor(id, username, position, rotation) {
         this.id = id
         this.username = username
+        this.mesh = new Group();
 
         // Load character
         GameObjects.goose.then((goose) => {
-            this.character = goose.clone()
-            this.character.scale.set(1.75, 1.75, -1.75)
-            GooseGame.instance.scene.add(this.character)
+            let characterMesh = goose.clone()
+            characterMesh.scale.set(1.75, 1.75, -1.75)
+            characterMesh.name = "goose"
+            this.mesh.add(characterMesh)
         })
 
+        // Create nametag group
+        this.nametag = new Group();
+        this.nametag.name = "nametag"
+
+        // Load the font
         const loader = new FontLoader()
         const font = loader.parse(HelvetikerFont)
 
-        this.nametag = new Mesh(
-            new TextGeometry(username ?? '', {
-                font: font,
-                size: 0.5,
-                depth: 0.1,
-                curveSegments: 1,
-            }),
-            new MeshNormalMaterial()
+        // Create the text
+        const textMesh = new Mesh(
+            new ShapeGeometry(font.generateShapes(username ?? '', 0.4), 3),
+            new MeshBasicMaterial({ color: 0xFFFFFF })
         )
-        this.nametag.geometry.center()
-        this.nametag.scale.set(1, 1, 1)
+        textMesh.geometry.center()
+        this.nametag.add(textMesh)
 
-        this.setPosition(position)
-        this.setRotation(rotation)
+        // Create the background with text as size
+        const backgroundMesh = new Mesh(
+            new PlaneGeometry(
+                0.15 + textMesh.geometry.boundingBox.max.x - textMesh.geometry.boundingBox.min.x,
+                0.15 + textMesh.geometry.boundingBox.max.y - textMesh.geometry.boundingBox.min.y,
+            ),
+            new MeshBasicMaterial({
+                color: 0x000000,
+                transparent: true,
+                opacity: 0.5,
+                depthWrite: false
+            })
+        )
+        backgroundMesh.position.set(0, 0, -0.01)
+        this.nametag.add(backgroundMesh)
 
-        GooseGame.instance.scene.add(this.nametag)
+        // Move nametag to position
+        this.nametag.position.set(0, 2.75, 0)
+
+        // Add to mesh
+        this.mesh.add(this.nametag)
+
+        // Add to scene
+        GooseGame.instance.scene.add(this.mesh)
     }
 
     setPosition(position) {
-        this.nametag.position.set(position.x, position.y + 0.5, position.z)
-        this.nametag.lookAt(GooseGame.instance.camera.position)
-        if (this.character) {
-            this.character.position.set(position.x, position.y - 2, position.z)
-        }
+        this.mesh.position.set(position.x, position.y - 2, position.z)
     }
 
     setRotation(rotation) {
+        this.mesh.rotation.set(rotation.x, rotation.y, rotation.z)
         this.nametag.lookAt(GooseGame.instance.camera.position)
-        if (this.character) {
-            this.character.rotation.set(rotation.x, rotation.y, rotation.z)
-        }
     }
 
     dispose() {
-        GooseGame.instance.scene.remove(this.character)
-        // this.mesh.geometry.dispose()
+        this.mesh.traverse((child) => {
+            if (child.isMesh) {
+                if (child.geometry) {
+                    child.geometry.dispose();
+                }
+                if (child.material) {
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach((mat) => mat.dispose());
+                    } else {
+                        child.material.dispose();
+                    }
+                }
+                if (child.material.map) {
+                    child.material.map.dispose();
+                }
+            }
+        });
 
-        GooseGame.instance.scene.remove(this.nametag)
-        this.nametag.geometry.dispose()
-        this.nametag.material.dispose()
+        // Remove all children
+        while (this.mesh.children.length > 0) {
+            this.mesh.remove(this.mesh.children[0]);
+        }
+
     }
 }
 
