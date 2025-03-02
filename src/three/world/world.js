@@ -2,32 +2,24 @@ import {
     PlaneGeometry,
     MeshStandardMaterial,
     Mesh,
-    TextureLoader,
-    RepeatWrapping,
     DirectionalLight,
     HemisphereLight,
     Fog,
     Color,
     MathUtils,
+    Float32BufferAttribute
 } from 'three'
+import Sea from './sea'
+import Textures from '../utils/textures.js'
 import GooseGame from '..'
 
 class World {
-    seaHeight = 15
+    seaHeight = 1;
     maxHeight = 0
     worldSize = 1024
     worldTime = 6000
 
     constructor() {
-        //Ground
-        let loader = new TextureLoader()
-        const grassTexture = loader.load('grass.png', (texture) => {
-            texture.wrapS = texture.wrapT = RepeatWrapping
-        })
-        const sandTexture = loader.load('sand.png', (texture) => {
-            texture.wrapS = texture.wrapT = RepeatWrapping
-        })
-
         // Sky
         GooseGame.instance.scene.background = new Color(0x99ddff)
 
@@ -41,7 +33,8 @@ class World {
         // Ambient Light
         this.ambientLight = new HemisphereLight(0xffffff, 0xffffff, 1)
         GooseGame.instance.scene.add(this.ambientLight)
-
+    }
+    createWorld(terrain) {
         const geometry = new PlaneGeometry(
             this.worldSize,
             this.worldSize,
@@ -49,16 +42,16 @@ class World {
             this.worldSize / 16
         )
 
-        this.world = new Mesh(
+        this.mesh = new Mesh(
             geometry,
             new MeshStandardMaterial({
-                map: grassTexture,
+                map: Textures.grass,
             })
         )
 
-        this.world.material.onBeforeCompile = (shader) => {
-            shader.uniforms.sandTexture = { value: sandTexture }
-            shader.uniforms.grassTexture = { value: grassTexture }
+        this.mesh.material.onBeforeCompile = (shader) => {
+            shader.uniforms.sandTexture = { value: Textures.sand }
+            shader.uniforms.grassTexture = { value: Textures.grass }
             shader.uniforms.heightThreshold = {
                 value: GooseGame.instance.world.seaHeight + 2,
             } // Change this value to control blending
@@ -111,38 +104,16 @@ class World {
             )
         }
 
-        this.world.rotation.x = -Math.PI / 2
+        this.mesh.rotation.x = -Math.PI / 2
+
+        const bufferArray = new Float32BufferAttribute(terrain, 3)
+        this.mesh.geometry.attributes.position = bufferArray
+
+        GooseGame.instance.scene.add(this.mesh)
+        new Sea()
     }
     getWorld() {
-        return this.world
-    }
-    getHeight(x, z) {
-        const worldSize = this.worldSize
-        const segments = worldSize / 16
-        const pos = this.world.geometry.attributes.position.array
-
-        // Convert world (x, z) to local grid space
-        const halfSize = worldSize / 2
-        const gridX = ((x + halfSize) / worldSize) * segments
-        const gridZ = ((z + halfSize) / worldSize) * segments
-
-        const x1 = Math.floor(gridX) // Bottom-left vertex in the grid
-        const x2 = Math.min(x1 + 1, segments) // Right neighbor
-        const z1 = Math.floor(gridZ) // Bottom-left vertex in the grid
-        const z2 = Math.min(z1 + 1, segments) // Top neighbor
-
-        const idx = (gx, gz) => (gz * (segments + 1) + gx) * 3
-        const y11 = pos[idx(x1, z1) + 2] // Bottom-left vertex height
-        const y12 = pos[idx(x1, z2) + 2] // Top-left vertex height
-        const y21 = pos[idx(x2, z1) + 2] // Bottom-right vertex height
-        const y22 = pos[idx(x2, z2) + 2] // Top-right vertex height
-
-        //Interpolate in the x-direction (left-to-right):
-        const r1 = y11 * (1 - (gridX - x1)) + y21 * (gridX - x1)
-        const r2 = y12 * (1 - (gridX - x1)) + y22 * (gridX - x1)
-
-        //Interpolate in the z-direction (bottom-to-top):
-        return r1 * (1 - (gridZ - z1)) + r2 * (gridZ - z1)
+        return this.mesh
     }
     updateTime() {
         this.worldTime++

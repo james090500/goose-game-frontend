@@ -17,6 +17,14 @@ class Multiplayer {
             this.updatePlayers(data)
         })
 
+        this.io.on('world', (data) => {
+            GooseGame.instance.world.seaHeight = data.seaHeight
+            GooseGame.instance.world.maxHeight = data.maxHeight
+
+            GooseGame.instance.world.createWorld(data.terrain);
+            GooseGame.instance.world.setTrees(data.trees)
+        })
+
         this.io.on('time', (data) => {
             GooseGame.instance.world.worldTime = data
         })

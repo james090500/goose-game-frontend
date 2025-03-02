@@ -169,12 +169,14 @@ class Controls {
     }
 
     checkGroundCollision() {
+        if(!GooseGame.instance.world.mesh) return;
+
         const raycaster = new Raycaster()
         const downVector = new Vector3(0, -1, 0)
 
         raycaster.set(this.camera.position, downVector)
         const intersects = raycaster.intersectObject(
-            GooseGame.instance.world.getWorld()
+            GooseGame.instance.world.mesh
         )
 
         if (intersects.length > 0) {

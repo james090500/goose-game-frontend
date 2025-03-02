@@ -7,8 +7,6 @@ import { FXAAShader } from 'three/addons/shaders/FXAAShader.js'
 import Controls from './controls.js'
 import Multiplayer from './multiplayer.js'
 import World from './world/world.js'
-import Terrain from './world/terrain.js'
-import Sea from './world/sea.js'
 import Debug from './gui/debug.js'
 
 class GooseGame {
@@ -70,9 +68,6 @@ class GooseGame {
 
         // World
         this.world = new World()
-        new Terrain()
-        new Sea()
-        this.scene.add(this.world.getWorld())
 
         // Debug
         this.debug = new Debug()
