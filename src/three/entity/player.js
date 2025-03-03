@@ -1,4 +1,12 @@
-import { Mesh, MeshBasicMaterial, MeshNormalMaterial, PlaneGeometry, ShapeGeometry, Group, Box3 } from 'three'
+import {
+    Mesh,
+    MeshBasicMaterial,
+    MeshNormalMaterial,
+    PlaneGeometry,
+    ShapeGeometry,
+    Group,
+    Box3,
+} from 'three'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js'
 import HelvetikerFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
 import GooseGame from '..'
@@ -8,19 +16,19 @@ class Player {
     constructor(id, username) {
         this.id = id
         this.username = username
-        this.mesh = new Group();
+        this.mesh = new Group()
 
         // Load character
         GameObjects.goose.then((goose) => {
             let characterMesh = goose.clone()
             characterMesh.scale.set(1.75, 1.75, -1.75)
-            characterMesh.name = "goose"
+            characterMesh.name = 'goose'
             this.mesh.add(characterMesh)
         })
 
         // Create nametag group
-        this.nametag = new Group();
-        this.nametag.name = "nametag"
+        this.nametag = new Group()
+        this.nametag.name = 'nametag'
 
         // Load the font
         const loader = new FontLoader()
@@ -29,7 +37,7 @@ class Player {
         // Create the text
         const textMesh = new Mesh(
             new ShapeGeometry(font.generateShapes(username ?? '', 0.4), 3),
-            new MeshBasicMaterial({ color: 0xFFFFFF })
+            new MeshBasicMaterial({ color: 0xffffff })
         )
         textMesh.geometry.center()
         this.nametag.add(textMesh)
@@ -37,14 +45,18 @@ class Player {
         // Create the background with text as size
         const backgroundMesh = new Mesh(
             new PlaneGeometry(
-                0.15 + textMesh.geometry.boundingBox.max.x - textMesh.geometry.boundingBox.min.x,
-                0.15 + textMesh.geometry.boundingBox.max.y - textMesh.geometry.boundingBox.min.y,
+                0.15 +
+                    textMesh.geometry.boundingBox.max.x -
+                    textMesh.geometry.boundingBox.min.x,
+                0.15 +
+                    textMesh.geometry.boundingBox.max.y -
+                    textMesh.geometry.boundingBox.min.y
             ),
             new MeshBasicMaterial({
                 color: 0x000000,
                 transparent: true,
                 opacity: 0.5,
-                depthWrite: false
+                depthWrite: false,
             })
         )
         backgroundMesh.position.set(0, 0, -0.01)
@@ -78,26 +90,25 @@ class Player {
         this.mesh.traverse((child) => {
             if (child.isMesh) {
                 if (child.geometry) {
-                    child.geometry.dispose();
+                    child.geometry.dispose()
                 }
                 if (child.material) {
                     if (Array.isArray(child.material)) {
-                        child.material.forEach((mat) => mat.dispose());
+                        child.material.forEach((mat) => mat.dispose())
                     } else {
-                        child.material.dispose();
+                        child.material.dispose()
                     }
                 }
                 if (child.material.map) {
-                    child.material.map.dispose();
+                    child.material.map.dispose()
                 }
             }
-        });
+        })
 
         // Remove all children
         while (this.mesh.children.length > 0) {
-            this.mesh.remove(this.mesh.children[0]);
+            this.mesh.remove(this.mesh.children[0])
         }
-
     }
 }
 

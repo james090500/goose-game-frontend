@@ -28,11 +28,11 @@ class Sea {
 
     animate(time) {
         const seaPosition = this.mesh.geometry.attributes.position
-        for(let i = 0; i < seaPosition.count; i++) {
+        for (let i = 0; i < seaPosition.count; i++) {
             const waveAmount = 0.5
             const waveSpeed = time * 2
-            const wave = Math.sin( i / 5 + ( waveSpeed + i ) / 7 ) * waveAmount
-            if(i == 0) {
+            const wave = Math.sin(i / 5 + (waveSpeed + i) / 7) * waveAmount
+            if (i == 0) {
             }
             seaPosition.setZ(i, wave)
         }

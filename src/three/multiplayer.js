@@ -18,7 +18,7 @@ class Multiplayer {
 
         // Set the existing players location
         this.io.on('all_players', (data) => {
-            for(const player of data) {
+            for (const player of data) {
                 this.updatePlayers(player)
             }
         })
@@ -34,7 +34,7 @@ class Multiplayer {
             GooseGame.instance.world.seaHeight = data.seaHeight
             GooseGame.instance.world.maxHeight = data.maxHeight
 
-            GooseGame.instance.world.createWorld(data.terrain);
+            GooseGame.instance.world.createWorld(data.terrain)
             GooseGame.instance.world.createTrees(data.trees)
         })
 
@@ -59,11 +59,8 @@ class Multiplayer {
     updatePlayers(data) {
         // Find or create a player
         let player = this.players.get(data.id)
-        if(!player) {
-            player = new Player(
-                data.id,
-                data.username
-            )
+        if (!player) {
+            player = new Player(data.id, data.username)
 
             this.players.set(data.id, player)
         }

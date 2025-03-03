@@ -58,7 +58,7 @@ class Controls {
                 opacity: 0.75,
                 visible: false,
                 depthWrite: false,
-                depthTest: false
+                depthTest: false,
             })
         )
         this.waterOverlay.position.set(0, 0, -1) // Slightly in front of the camera
@@ -169,7 +169,7 @@ class Controls {
     }
 
     checkGroundCollision() {
-        if(!GooseGame.instance.world.mesh) return;
+        if (!GooseGame.instance.world.mesh) return
 
         const raycaster = new Raycaster()
         const downVector = new Vector3(0, -1, 0)
@@ -210,7 +210,7 @@ class Controls {
         }
     }
     updateRotatables() {
-        for(const player of GooseGame.instance.multiplayer.players.values()) {
+        for (const player of GooseGame.instance.multiplayer.players.values()) {
             player.updateNametag()
         }
     }

@@ -1,7 +1,4 @@
-import {
-    TextureLoader,
-    RepeatWrapping,
-} from 'three'
+import { TextureLoader, RepeatWrapping } from 'three'
 
 class Textures {
     static {

@@ -7,7 +7,7 @@ import {
     Fog,
     Color,
     MathUtils,
-    Float32BufferAttribute
+    Float32BufferAttribute,
 } from 'three'
 import Sea from './sea'
 import Tree from '../entity/tree.js'
@@ -15,7 +15,7 @@ import Textures from '../utils/textures.js'
 import GooseGame from '..'
 
 class World {
-    seaHeight = 1;
+    seaHeight = 1
     maxHeight = 0
     worldSize = 1024
     worldTime = 6000
@@ -114,7 +114,7 @@ class World {
         this.sea = new Sea()
     }
     createTrees(trees) {
-        for(let i = 0; i < trees.length; i += 3) {
+        for (let i = 0; i < trees.length; i += 3) {
             const x = trees[i]
             const y = trees[i + 1]
             const z = trees[i + 2]
@@ -126,7 +126,7 @@ class World {
         return this.mesh
     }
     animate(time) {
-        if(this.sea) {
+        if (this.sea) {
             this.sea.animate(time)
         }
     }
