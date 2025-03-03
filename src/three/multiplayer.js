@@ -3,7 +3,7 @@ import Player from './entity/player.js'
 import GooseGame from './index.js'
 
 class Multiplayer {
-    players = []
+    players = new Map()
 
     constructor() {
         const url = import.meta.env.DEV
@@ -13,10 +13,23 @@ class Multiplayer {
         this.io = io(`${url}?username=${GooseGame.instance.options.username}`)
 
         this.io.on('update', (data) => {
-            this.me = this.io.id
             this.updatePlayers(data)
         })
 
+        // Set the existing players location
+        this.io.on('all_players', (data) => {
+            for(const player of data) {
+                this.updatePlayers(player)
+            }
+        })
+
+        // Remove a player on leave
+        this.io.on('player_leave', (data) => {
+            this.players.get(data).dispose()
+            this.players.delete(data)
+        })
+
+        // Load the world
         this.io.on('world', (data) => {
             GooseGame.instance.world.seaHeight = data.seaHeight
             GooseGame.instance.world.maxHeight = data.maxHeight
@@ -25,6 +38,7 @@ class Multiplayer {
             GooseGame.instance.world.createTrees(data.trees)
         })
 
+        // Sync time
         this.io.on('time', (data) => {
             GooseGame.instance.world.worldTime = data
         })
@@ -42,45 +56,30 @@ class Multiplayer {
             z: rotation.z,
         })
     }
-    updatePlayers(newPlayers) {
-        // Remove players that are not in the newPlayers array
-        this.players = this.players.filter((player) => {
-            if (!newPlayers.some((newPlayer) => newPlayer.id === player.id)) {
-                player.dispose();
-                return false; // Remove from this.players
-            }
-            return true; // Keep in this.players
-        });
+    updatePlayers(data) {
+        // Find or create a player
+        let player = this.players.get(data.id)
+        if(!player) {
+            player = new Player(
+                data.id,
+                data.username
+            )
 
+            this.players.set(data.id, player)
+        }
 
-        // Update existing players or add new players
-        newPlayers.forEach((player) => {
-            //Don't add myself
-            if (player.id === this.me) return
+        // Set players positions
+        player.setPosition(data.position)
+        player.setRotation(data.rotation)
 
-            //Find the player index
-            let index = this.players.findIndex((item) => item.id === player.id)
-            if (index !== -1) {
-                this.players[index].setPosition(player.position)
-                this.players[index].setRotation(player.rotation)
-            } else {
-                this.players.push(
-                    new Player(
-                        player.id,
-                        player.username,
-                        player.position,
-                        player.rotation
-                    )
-                )
-            }
-        })
-
-        const playerList = newPlayers.map((player) => {
-            return {
-                id: player.id,
-                username: player.username,
-            }
-        })
+        // Player List
+        let playerList = []
+        for (const value of this.players.values()) {
+            playerList.push({
+                id: value.id,
+                username: value.username,
+            })
+        }
         GooseGame.instance.options.onUpdatePlayers(playerList)
     }
 }

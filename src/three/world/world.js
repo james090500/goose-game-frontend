@@ -119,8 +119,6 @@ class World {
             const y = trees[i + 1]
             const z = trees[i + 2]
 
-            console.log(x, y, z)
-
             new Tree(x, y, z)
         }
     }

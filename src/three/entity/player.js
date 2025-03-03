@@ -5,7 +5,7 @@ import GooseGame from '..'
 import GameObjects from '../utils/gameobjects'
 
 class Player {
-    constructor(id, username, position, rotation) {
+    constructor(id, username) {
         this.id = id
         this.username = username
         this.mesh = new Group();
@@ -62,10 +62,15 @@ class Player {
 
     setPosition(position) {
         this.mesh.position.set(position.x, position.y - 2, position.z)
+        this.updateNametag()
     }
 
     setRotation(rotation) {
         this.mesh.rotation.set(rotation.x, rotation.y, rotation.z)
+        this.updateNametag()
+    }
+
+    updateNametag() {
         this.nametag.lookAt(GooseGame.instance.camera.position)
     }
 
