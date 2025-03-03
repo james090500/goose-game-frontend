@@ -25,7 +25,7 @@ class World {
         GooseGame.instance.scene.background = new Color(0x99ddff)
 
         // Fog
-        GooseGame.instance.scene.fog = new Fog(0x99ddff, 256, 512)
+        GooseGame.instance.scene.fog = new Fog(0x99ddff, 128, 512)
 
         // The Sun
         this.sun = new DirectionalLight(0xffffff, 3)
@@ -111,7 +111,7 @@ class World {
         this.mesh.geometry.attributes.position = bufferArray
 
         GooseGame.instance.scene.add(this.mesh)
-        new Sea()
+        this.sea = new Sea()
     }
     createTrees(trees) {
         for(let i = 0; i < trees.length; i += 3) {
@@ -124,6 +124,11 @@ class World {
     }
     getWorld() {
         return this.mesh
+    }
+    animate(time) {
+        if(this.sea) {
+            this.sea.animate(time)
+        }
     }
     updateTime() {
         this.worldTime++

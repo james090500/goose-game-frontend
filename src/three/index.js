@@ -109,11 +109,14 @@ class GooseGame {
         if (this._dispose) return
 
         this.delta = this.clock.getDelta()
+        this.time = this.clock.getElapsedTime()
 
         requestAnimationFrame(this.animate)
 
         this.controls.update(this.delta)
         this.composer.render()
+
+        this.world.animate(this.time)
 
         if (this.resizeRendererToDisplaySize()) {
             this.camera.aspect =
