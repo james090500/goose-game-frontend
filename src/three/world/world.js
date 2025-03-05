@@ -152,29 +152,19 @@ class World {
     getWorldLight(tick) {
         let transition
 
-        // Dawn (Midnight to Orange)
-        if (tick >= 6000 && tick < 6500) {
-            transition = (tick - 6000) / 500 // Normalize between 6000-6500
-            return MathUtils.lerp(1, 1.5, transition)
-        }
-        // Sunrise (Orange to Daylight)
-        else if (tick >= 6500 && tick < 7000) {
-            transition = (tick - 6500) / 500 // Normalize between 6500-7000
-            return MathUtils.lerp(1.5, 2, transition)
+        // Midnight to Daylight
+        if (tick >= 6000 && tick < 7000) {
+            transition = (tick - 6000) / 1000 // Normalize between 6000-7000
+            return MathUtils.lerp(0, 2, transition)
         }
         // Daylight (Static 2.0)
         else if (tick >= 7000 && tick < 18000) {
             return 2
         }
-        // Sunset (Daylight to Orange)
-        else if (tick >= 18000 && tick < 18500) {
-            transition = (tick - 18000) / 500 // Normalize between 18000-18500
-            return MathUtils.lerp(2, 1.5, transition)
-        }
-        // Dusk (Orange to Midnight)
-        else if (tick >= 18500 && tick < 19000) {
-            transition = (tick - 18500) / 500 // Normalize between 18500-19000
-            return MathUtils.lerp(1.5, 1, transition)
+        // Daylight to Midnight
+        else if (tick >= 18000 && tick < 19000) {
+            transition = (tick - 18000) / 1000 // Normalize between 18000-18500
+            return MathUtils.lerp(2, 0, transition)
         }
         // Night (Static 0.0)
         else {

@@ -61,6 +61,7 @@ class Controls {
                 depthTest: false,
             })
         )
+        this.waterOverlay.renderOrder = 999
         this.waterOverlay.position.set(0, 0, -1) // Slightly in front of the camera
         this.camera.add(this.waterOverlay) // Attach it to the camera
 
