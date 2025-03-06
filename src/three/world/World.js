@@ -1,16 +1,18 @@
 import { Color, MathUtils } from 'three'
 import WorldRenderer from '../renderer/world/WorldRenderer.js'
+import SeaRenderer from '../renderer/world/SeaRenderer.js'
 import TreeEntity from '../entity/world/TreeEntity.js'
 import GooseGame from '../GooseGame.js'
 
 class World {
-    seaHeight = 1
+    seaHeight = 2
     maxHeight = 0
     worldSize = 1024
     worldTime = 6000
 
     constructor() {
-        this.worldRenderer = new WorldRenderer(this)
+        this.worldRenderer = new WorldRenderer(this.worldSize)
+        this.seaRenderer = new SeaRenderer(this.worldSize)
     }
 
     createTrees(trees) {

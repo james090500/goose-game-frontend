@@ -183,27 +183,24 @@ class LocalPlayer {
     emitMovement() {
         if (!this.camera.position.equals(this.previousPosition)) {
             const clonedPosition = this.camera.position.clone()
-            GooseGame.instance.multiplayer.updatePosition(clonedPosition)
+            GooseGame.instance.gameManager.multiplayer.updatePosition(
+                clonedPosition
+            )
             this.previousPosition.copy(this.camera.position)
-            this.updateRotatables()
         }
 
         if (!this.camera.rotation.equals(this.previousRotation)) {
             const clonedRotation = this.camera.rotation.clone()
-            GooseGame.instance.multiplayer.updateRotation(clonedRotation)
+            GooseGame.instance.gameManager.multiplayer.updateRotation(
+                clonedRotation
+            )
             this.previousRotation.copy(this.camera.rotation)
-            this.updateRotatables()
-        }
-    }
-    updateRotatables() {
-        for (const player of GooseGame.instance.multiplayer.players.values()) {
-            player.updateNametag()
         }
     }
     /**
      * Update the controls
      */
-    loop(delta) {
+    render(delta) {
         this.updateMovement(delta)
     }
 }

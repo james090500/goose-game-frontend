@@ -13,8 +13,10 @@ import TextureManager from '../../utils/TextureManager.js'
 import GooseGame from '../../GooseGame.js'
 
 class WorldRenderer {
-    constructor(world) {
-        this.world = world
+    constructor(worldSize) {
+        //Variables
+        this.worldSize = worldSize
+
         this.renderer = GooseGame.instance.renderer
 
         // Sky
@@ -33,10 +35,10 @@ class WorldRenderer {
     }
     renderWorld(terrain) {
         const geometry = new PlaneGeometry(
-            this.world.worldSize,
-            this.world.worldSize,
-            this.world.worldSize / 16,
-            this.world.worldSize / 16
+            this.worldSize,
+            this.worldSize,
+            this.worldSize / 16,
+            this.worldSize / 16
         )
 
         this.mesh = new Mesh(
@@ -50,7 +52,7 @@ class WorldRenderer {
             shader.uniforms.sandTexture = { value: TextureManager.sand }
             shader.uniforms.grassTexture = { value: TextureManager.grass }
             shader.uniforms.heightThreshold = {
-                value: this.world.seaHeight + 2,
+                value: GooseGame.instance.gameManager.world.seaHeight + 2,
             } // Change this value to control blending
 
             // Modify vertex shader: Pass position & UV to fragment shader
@@ -107,11 +109,6 @@ class WorldRenderer {
         this.mesh.geometry.attributes.position = bufferArray
 
         GooseGame.instance.renderer.sceneManager.add(this.mesh)
-    }
-    render(time) {
-        if (this.sea) {
-            this.sea.animate(time)
-        }
     }
 }
 

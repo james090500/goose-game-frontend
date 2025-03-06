@@ -2,7 +2,6 @@ import Config from './Config.js'
 import Renderer from './renderer/Renderer.js'
 import Input from './core/Input.js'
 import GameManager from './GameManager.js'
-import Multiplayer from './core/Multiplayer.js'
 import { Clock } from 'three'
 
 class GooseGame {
@@ -26,16 +25,6 @@ class GooseGame {
 
         // Game Logic
         this.gameManager = new GameManager()
-        this.multiplayer = new Multiplayer()
-        // this.world = new World()
-        // this.debug = new Debug()
-
-        // Start game loop
-        // 50ms, aka 20 TPS
-        // this.gameLoop = this.gameLoop.bind(this)
-        // this.gameLoopInterval = setInterval(this.gameLoop, 50)
-
-        // Start the animation
 
         this.loop = this.loop.bind(this)
         this.loop()
@@ -46,7 +35,10 @@ class GooseGame {
         const delta = this.clock.getDelta()
         const time = this.clock.getElapsedTime()
 
-        this.renderer.render(delta, time)
+        // Scene Renderer
+        this.renderer.render()
+
+        // Game Loop
         this.gameManager.gameLoop(delta, time)
     }
     /**

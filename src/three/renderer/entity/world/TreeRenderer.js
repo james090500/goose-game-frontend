@@ -1,5 +1,5 @@
-import GameObjects from '../../utils/GameObjects.js'
-import GooseGame from '../../GooseGame.js'
+import GameObjects from '../../../utils/GameObjects.js'
+import GooseGame from '../../../GooseGame.js'
 
 class TreeEntity {
     constructor(x, y, z) {

@@ -1,21 +1,17 @@
 import {
     Mesh,
     MeshBasicMaterial,
-    MeshNormalMaterial,
     PlaneGeometry,
     ShapeGeometry,
     Group,
-    Box3,
 } from 'three'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js'
 import HelvetikerFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
-import GooseGame from '..'
-import GameObjects from '../utils/gameobjects'
+import GooseGame from '../../GooseGame.js'
+import GameObjects from '../../utils/GameObjects.js'
 
-class Player {
-    constructor(id, username) {
-        this.id = id
-        this.username = username
+class PlayerRenderer {
+    constructor(username) {
         this.mesh = new Group()
 
         // Load character
@@ -69,47 +65,24 @@ class Player {
         this.mesh.add(this.nametag)
 
         // Add to scene
-        GooseGame.instance.scene.add(this.mesh)
+        GooseGame.instance.renderer.sceneManager.add(this.mesh)
     }
 
-    setPosition(position) {
-        this.mesh.position.set(position.x, position.y - 2, position.z)
+    setPosition(x, y, z) {
+        this.mesh.position.set(x, y, z)
         this.updateNametag()
     }
 
-    setRotation(rotation) {
-        this.mesh.rotation.set(rotation.x, rotation.y, rotation.z)
+    setRotation(x, y, z) {
+        this.mesh.rotation.set(x, y, z)
         this.updateNametag()
     }
 
     updateNametag() {
-        this.nametag.lookAt(GooseGame.instance.camera.position)
-    }
-
-    dispose() {
-        this.mesh.traverse((child) => {
-            if (child.isMesh) {
-                if (child.geometry) {
-                    child.geometry.dispose()
-                }
-                if (child.material) {
-                    if (Array.isArray(child.material)) {
-                        child.material.forEach((mat) => mat.dispose())
-                    } else {
-                        child.material.dispose()
-                    }
-                }
-                if (child.material.map) {
-                    child.material.map.dispose()
-                }
-            }
-        })
-
-        // Remove all children
-        while (this.mesh.children.length > 0) {
-            this.mesh.remove(this.mesh.children[0])
-        }
+        this.nametag.lookAt(
+            GooseGame.instance.renderer.sceneManager.camera.position
+        )
     }
 }
 
-export default Player
+export default PlayerRenderer

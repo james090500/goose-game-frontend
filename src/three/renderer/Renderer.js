@@ -53,7 +53,7 @@ class Renderer {
     /**
      * Animate the scene
      */
-    render(delta, time) {
+    render() {
         this.composer.render()
 
         if (this.resizeRendererToDisplaySize()) {

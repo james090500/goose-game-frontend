@@ -1,4 +1,4 @@
-import TreeRenderer from '../../renderer/entity/TreeRenderer.js'
+import TreeRenderer from '../../renderer/entity/world/TreeRenderer.js'
 
 class TreeEntity {
     constructor(x, y, z) {
