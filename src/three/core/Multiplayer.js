@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client'
-import Player from './entity/player.js'
-import GooseGame from './index.js'
+// import Player from '../entity/player.js'
+import GooseGame from '../GooseGame.js'
 
 class Multiplayer {
     players = new Map()
@@ -10,7 +10,7 @@ class Multiplayer {
             ? `http://${window.location.hostname}:3000`
             : `https://goose-game-api.james090500.com`
 
-        this.io = io(`${url}?username=${GooseGame.instance.options.username}`)
+        this.io = io(`${url}?username=${GooseGame.instance.config.USERNAME}`)
 
         this.io.on('update', (data) => {
             this.updatePlayers(data)
@@ -31,16 +31,18 @@ class Multiplayer {
 
         // Load the world
         this.io.on('world', (data) => {
-            GooseGame.instance.world.seaHeight = data.seaHeight
-            GooseGame.instance.world.maxHeight = data.maxHeight
+            GooseGame.instance.gameManager.world.seaHeight = data.seaHeight
+            GooseGame.instance.gameManager.world.maxHeight = data.maxHeight
 
-            GooseGame.instance.world.createWorld(data.terrain)
-            GooseGame.instance.world.createTrees(data.trees)
+            GooseGame.instance.gameManager.world.worldRenderer.renderWorld(
+                data.terrain
+            )
+            GooseGame.instance.gameManager.world.createTrees(data.trees)
         })
 
         // Sync time
         this.io.on('time', (data) => {
-            GooseGame.instance.world.worldTime = data
+            GooseGame.instance.gameManager.world.worldTime = data
         })
     }
     disconnect() {

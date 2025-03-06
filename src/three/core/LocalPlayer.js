@@ -1,5 +1,4 @@
-import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js'
-import GooseGame from './index.js'
+import GooseGame from '../GooseGame.js'
 import {
     Euler,
     Vector3,
@@ -10,7 +9,7 @@ import {
     MeshBasicMaterial,
 } from 'three'
 
-class Controls {
+class LocalPlayer {
     playerHeight = 2 // Height of player
     moveSpeed = 5 // Speed of movement
     jumpSpeed = 10 // Speed of jump
@@ -25,30 +24,7 @@ class Controls {
     } // Movement keys
 
     constructor() {
-        this.options = GooseGame.instance.options
-        this.camera = GooseGame.instance.camera
-        this.renderer = GooseGame.instance.renderer
-
-        // Controls
-        this.controls = new PointerLockControls(
-            this.camera,
-            this.renderer.domElement
-        )
-        this.controls.addEventListener('lock', this.options.onLock)
-        this.controls.addEventListener('unlock', this.options.onUnlock)
-        this.controls.lookSpeed = 0.1
-
-        // Keyboard event listeners
-        window.addEventListener('keydown', (event) => {
-            if (this.keys.hasOwnProperty(event.code)) {
-                this.keys[event.code] = true
-            }
-        })
-        window.addEventListener('keyup', (event) => {
-            if (this.keys.hasOwnProperty(event.code)) {
-                this.keys[event.code] = false
-            }
-        })
+        this.camera = GooseGame.instance.renderer.sceneManager.camera
 
         this.waterOverlay = new Mesh(
             new PlaneGeometry(3, 2),
@@ -61,6 +37,7 @@ class Controls {
                 depthTest: false,
             })
         )
+        this.waterOverlay.renderOrder = 999
         this.waterOverlay.position.set(0, 0, -1) // Slightly in front of the camera
         this.camera.add(this.waterOverlay) // Attach it to the camera
 
@@ -92,28 +69,30 @@ class Controls {
             .normalize() // Left is cross product of forward and up vector
         const right = left.clone().negate() // Right is opposite of left
 
+        const keys = GooseGame.instance.input.keys
+
         //Calculate running
         let moveSpeed = this.moveSpeed * delta
-        if (this.keys.ShiftLeft && !this.swimming) {
+        if (keys.ShiftLeft && !this.swimming) {
             moveSpeed = (this.moveSpeed + 2) * delta
         } else if (this.swimming) {
             moveSpeed = (this.moveSpeed - 2) * delta
         }
 
         // Update movement check based on direction
-        if (this.keys.KeyW && !this.checkCollision(forward)) {
+        if (keys.KeyW && !this.checkCollision(forward)) {
             this.camera.position.add(forward.clone().multiplyScalar(moveSpeed))
         }
-        if (this.keys.KeyS && !this.checkCollision(backward)) {
+        if (keys.KeyS && !this.checkCollision(backward)) {
             this.camera.position.add(backward.clone().multiplyScalar(moveSpeed))
         }
-        if (this.keys.KeyA && !this.checkCollision(left)) {
+        if (keys.KeyA && !this.checkCollision(left)) {
             this.camera.position.add(left.clone().multiplyScalar(moveSpeed))
         }
-        if (this.keys.KeyD && !this.checkCollision(right)) {
+        if (keys.KeyD && !this.checkCollision(right)) {
             this.camera.position.add(right.clone().multiplyScalar(moveSpeed))
         }
-        if (this.keys.Space && !this.jumping && !this.falling) {
+        if (keys.Space && !this.jumping && !this.falling) {
             this.jump()
         }
 
@@ -139,7 +118,10 @@ class Controls {
         this.checkGroundCollision()
 
         //Check if swimming
-        if (this.camera.position.y < GooseGame.instance.world.seaHeight) {
+        if (
+            this.camera.position.y <
+            GooseGame.instance.gameManager.world.seaHeight
+        ) {
             this.waterOverlay.material.visible = true
             this.swimming = true
         } else {
@@ -149,7 +131,11 @@ class Controls {
 
         // Make sure player never leaves this world
         if (this.camera.position.y < 0) {
-            this.camera.position.set(0, GooseGame.instance.world.maxHeight, 0)
+            this.camera.position.set(
+                0,
+                GooseGame.instance.gameManager.world.maxHeight,
+                0
+            )
         }
     }
 
@@ -163,20 +149,20 @@ class Controls {
     checkCollision(direction) {
         const raycaster = new Raycaster(this.camera.position, direction, 0, 1)
         const intersects = raycaster.intersectObjects(
-            GooseGame.instance.scene.children
+            GooseGame.instance.renderer.sceneManager.scene.children
         )
         return intersects.length > 0
     }
 
     checkGroundCollision() {
-        if (!GooseGame.instance.world.mesh) return
+        if (!GooseGame.instance.gameManager.world.worldRenderer.mesh) return
 
         const raycaster = new Raycaster()
         const downVector = new Vector3(0, -1, 0)
 
         raycaster.set(this.camera.position, downVector)
         const intersects = raycaster.intersectObject(
-            GooseGame.instance.world.mesh
+            GooseGame.instance.gameManager.world.worldRenderer.mesh
         )
 
         if (intersects.length > 0) {
@@ -215,18 +201,11 @@ class Controls {
         }
     }
     /**
-     * Lock the games controls
-     */
-    lock() {
-        this.controls.lock()
-    }
-    /**
      * Update the controls
      */
-    update(delta) {
+    loop(delta) {
         this.updateMovement(delta)
-        this.controls.update(delta)
     }
 }
 
-export default Controls
+export default LocalPlayer

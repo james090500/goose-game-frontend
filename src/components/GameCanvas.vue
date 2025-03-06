@@ -26,7 +26,7 @@
 </style>
 
 <script>
-import GooseGame from '../three/index.js'
+import GooseGame from '../three/GooseGame.js'
 import store from '@/store'
 import { mapState } from 'vuex'
 
@@ -56,7 +56,7 @@ export default {
     },
     methods: {
         lockControls() {
-            this.GooseGame.controls.lock()
+            this.GooseGame.lock()
         },
         disconnect() {
             store.commit('doLogin', null)

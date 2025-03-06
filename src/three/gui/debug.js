@@ -2,6 +2,7 @@ import { Mesh, MeshBasicMaterial, ShapeGeometry } from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import HelvetikerFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
 import GooseGame from '..'
+import Stats from 'three/addons/libs/stats.module.js'
 
 class Debug {
     constructor() {
@@ -27,6 +28,12 @@ class Debug {
         this.mesh.position.set(1, 6, -8)
 
         GooseGame.instance.camera.add(this.mesh)
+
+        //Stats
+        this.stats = new Stats()
+        GooseGame.instance.config.CANVAS.parentElement.appendChild(
+            this.stats.dom
+        )
     }
     objectToText(object) {
         const calculateTime = (time) => {
