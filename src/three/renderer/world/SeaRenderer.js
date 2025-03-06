@@ -1,10 +1,10 @@
 import { Mesh, PlaneGeometry, MeshStandardMaterial, DoubleSide } from 'three'
-import GooseGame from '..'
+import GooseGame from '../../GooseGame.js'
 
 class Sea {
-    constructor() {
-        let worldSize = GooseGame.instance.world.worldSize
+    seaHeight = 2
 
+    constructor(worldSize) {
         this.mesh = new Mesh(
             new PlaneGeometry(
                 worldSize * 2,
@@ -21,12 +21,13 @@ class Sea {
         )
 
         this.mesh.rotation.x = -Math.PI / 2
-        this.mesh.position.y = GooseGame.instance.world.seaHeight
 
-        GooseGame.instance.scene.add(this.mesh)
+        GooseGame.instance.renderer.sceneManager.add(this.mesh)
     }
-
-    animate(time) {
+    setSeaHeight(seaHeight) {
+        this.mesh.position.y = seaHeight
+    }
+    render(time) {
         const seaPosition = this.mesh.geometry.attributes.position
         for (let i = 0; i < seaPosition.count; i++) {
             const waveAmount = 0.5

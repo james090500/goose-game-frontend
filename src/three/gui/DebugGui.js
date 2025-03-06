@@ -1,18 +1,14 @@
 import { Mesh, MeshBasicMaterial, ShapeGeometry } from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import HelvetikerFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
-import GooseGame from '..'
+import GooseGame from '../GooseGame.js'
+import Stats from 'three/addons/libs/stats.module.js'
 
-class Debug {
+class DebugGui {
     constructor() {
         // Load the font
         const loader = new FontLoader()
         this.font = loader.parse(HelvetikerFont)
-
-        const text = this.objectToText({
-            position: GooseGame.instance.camera.position,
-            time: GooseGame.instance.world.worldTime,
-        })
 
         // Create the text
         this.mesh = new Mesh(
@@ -26,7 +22,13 @@ class Debug {
 
         this.mesh.position.set(0.5, 0.75, -1)
 
-        GooseGame.instance.camera.add(this.mesh)
+        GooseGame.instance.renderer.sceneManager.camera.add(this.mesh)
+
+        //Stats
+        this.stats = new Stats()
+        GooseGame.instance.config.CANVAS.parentElement.appendChild(
+            this.stats.dom
+        )
     }
     objectToText(object) {
         const calculateTime = (time) => {
@@ -43,17 +45,19 @@ class Debug {
             Ticks: ${object.time}
         `
     }
-    update() {
+    render() {
         const text = this.objectToText({
-            position: GooseGame.instance.camera.position,
-            time: GooseGame.instance.world.worldTime,
+            position: GooseGame.instance.renderer.sceneManager.camera.position,
+            time: GooseGame.instance.gameManager.world.worldTime,
         })
 
         this.mesh.geometry = new ShapeGeometry(
             this.font.generateShapes(text, 0.05),
             3
         )
+
+        this.stats.update()
     }
 }
 
-export default Debug
+export default DebugGui

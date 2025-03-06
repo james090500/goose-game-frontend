@@ -1,12 +1,12 @@
-import GameObjects from '../utils/gameobjects.js'
-import GooseGame from '../index.js'
+import GameObjects from '../../../utils/GameObjects.js'
+import GooseGame from '../../../GooseGame.js'
 
-class Tree {
+class TreeEntity {
     constructor(x, y, z) {
         GameObjects.tree.then((tree) => {
             this.object = tree.clone()
             this.object.position.set(x, y, z)
-            GooseGame.instance.scene.add(this.object)
+            GooseGame.instance.renderer.sceneManager.add(this.object)
         })
     }
 
@@ -15,4 +15,4 @@ class Tree {
     }
 }
 
-export default Tree
+export default TreeEntity

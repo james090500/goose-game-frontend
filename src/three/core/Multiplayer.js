@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client'
-import Player from './entity/player.js'
-import GooseGame from './index.js'
+import PlayerEntity from '../entity/PlayerEntity.js'
+import GooseGame from '../GooseGame.js'
 
 class Multiplayer {
     players = new Map()
@@ -10,7 +10,7 @@ class Multiplayer {
             ? `http://${window.location.hostname}:3000`
             : `https://goose-game-api.james090500.com`
 
-        this.io = io(`${url}?username=${GooseGame.instance.options.username}`)
+        this.io = io(`${url}?username=${GooseGame.instance.config.USERNAME}`)
 
         this.io.on('update', (data) => {
             this.updatePlayers(data)
@@ -25,22 +25,29 @@ class Multiplayer {
 
         // Remove a player on leave
         this.io.on('player_leave', (data) => {
-            this.players.get(data).dispose()
+            // this.players.get(data).dispose()
             this.players.delete(data)
         })
 
         // Load the world
         this.io.on('world', (data) => {
-            GooseGame.instance.world.seaHeight = data.seaHeight
-            GooseGame.instance.world.maxHeight = data.maxHeight
+            GooseGame.instance.gameManager.world.seaHeight = data.seaHeight
+            GooseGame.instance.gameManager.world.maxHeight = data.maxHeight
 
-            GooseGame.instance.world.createWorld(data.terrain)
-            GooseGame.instance.world.createTrees(data.trees)
+            // Update renderer with info
+            GooseGame.instance.gameManager.world.worldRenderer.renderWorld(
+                data.terrain
+            )
+            GooseGame.instance.gameManager.world.seaRenderer.setSeaHeight(
+                data.seaHeight
+            )
+
+            GooseGame.instance.gameManager.world.createTrees(data.trees)
         })
 
         // Sync time
         this.io.on('time', (data) => {
-            GooseGame.instance.world.worldTime = data
+            GooseGame.instance.gameManager.world.worldTime = data
         })
     }
     disconnect() {
@@ -60,7 +67,7 @@ class Multiplayer {
         // Find or create a player
         let player = this.players.get(data.id)
         if (!player) {
-            player = new Player(data.id, data.username)
+            player = new PlayerEntity(data.id, data.username)
 
             this.players.set(data.id, player)
         }
@@ -77,7 +84,7 @@ class Multiplayer {
                 username: value.username,
             })
         }
-        GooseGame.instance.options.onUpdatePlayers(playerList)
+        GooseGame.instance.config.ON_UPDATEPLAYERS(playerList)
     }
 }
 
