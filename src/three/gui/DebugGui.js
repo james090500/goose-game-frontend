@@ -15,12 +15,12 @@ class DebugGui {
             new ShapeGeometry(),
             new MeshBasicMaterial({
                 color: 0xffffff,
-                depthTest: false,
-                depthWrite: false,
             })
         )
 
-        this.mesh.position.set(1, 6, -8)
+        this.mesh.renderOrder = 1000
+
+        this.mesh.position.set(0.5, 0.75, -1)
 
         GooseGame.instance.renderer.sceneManager.camera.add(this.mesh)
 
@@ -52,7 +52,7 @@ class DebugGui {
         })
 
         this.mesh.geometry = new ShapeGeometry(
-            this.font.generateShapes(text, 0.4),
+            this.font.generateShapes(text, 0.05),
             3
         )
 
