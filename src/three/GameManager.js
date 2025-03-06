@@ -1,18 +1,22 @@
 import Multiplayer from './core/Multiplayer.js'
 import LocalPlayer from './core/LocalPlayer.js'
 import World from './world/World.js'
+import DebugGui from './gui/DebugGui.js'
 import GooseGame from './GooseGame.js'
 
 class GameManager {
     constructor() {
+        // Load the world
+        this.world = new World()
+
         // Multiplayer
         this.multiplayer = new Multiplayer()
 
         // Local Player
         this.localPlayer = new LocalPlayer()
 
-        // Load the world
-        this.world = new World()
+        // Gui
+        this.debug = new DebugGui()
 
         // Start Game Loop
         this.gameTick = this.gameTick.bind(this)
@@ -37,6 +41,7 @@ class GameManager {
 
         this.world.seaRenderer.render(time)
         this.localPlayer.render(delta)
+        this.debug.render()
     }
 }
 
