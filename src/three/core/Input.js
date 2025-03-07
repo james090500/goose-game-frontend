@@ -2,6 +2,11 @@ import { PointerLockControls } from 'three/addons/controls/PointerLockControls.j
 import GooseGame from '../GooseGame.js'
 
 class Controls {
+    mouse = {
+        LeftClick: false,
+        RightClick: false,
+    }
+
     keys = {
         KeyW: false,
         KeyS: false,
@@ -18,7 +23,6 @@ class Controls {
             GooseGame.instance.renderer.renderer.domElement
         )
 
-        console.log(this.controls)
         this.controls.addEventListener(
             'lock',
             GooseGame.instance.config.ON_LOCK
@@ -28,6 +32,15 @@ class Controls {
             GooseGame.instance.config.ON_UNLOCK
         )
         this.controls.lookSpeed = 0.1
+
+        // Mouse events
+        window.addEventListener('mousedown', (event) => {
+            if (event.button == 0) {
+                this.mouse.LeftClick = true
+            } else if (event.button == 2) {
+                this.mouse.RightClick = true
+            }
+        })
 
         // Keyboard event listeners
         window.addEventListener('keydown', (event) => {

@@ -8,20 +8,13 @@ import {
     PlaneGeometry,
     MeshBasicMaterial,
 } from 'three'
+import ShotEntity from '../entity/ShotEntity.js'
 
 class LocalPlayer {
     playerHeight = 2 // Height of player
-    moveSpeed = 5 // Speed of movement
+    moveSpeed = 7 // Speed of movement
     jumpSpeed = 10 // Speed of jump
     jumpDuration = 0.4 // Duration of jump
-    keys = {
-        KeyW: false,
-        KeyS: false,
-        KeyA: false,
-        KeyD: false,
-        Space: false,
-        ShiftLeft: false,
-    } // Movement keys
 
     constructor() {
         this.camera = GooseGame.instance.renderer.sceneManager.camera
@@ -52,6 +45,14 @@ class LocalPlayer {
         this.jumping = false
         this.jumpStartTime = 0
         this.clock = new Clock()
+    }
+    updateInteraction(delta) {
+        const mouse = GooseGame.instance.input.mouse
+        if (mouse.LeftClick) {
+            mouse.LeftClick = false
+
+            new ShotEntity(this.camera.position)
+        }
     }
     // Update movement
     updateMovement(delta) {
@@ -157,20 +158,21 @@ class LocalPlayer {
     checkGroundCollision() {
         if (!GooseGame.instance.gameManager.world.worldRenderer.mesh) return
 
-        const raycaster = new Raycaster()
         const downVector = new Vector3(0, -1, 0)
+        const raycaster = new Raycaster(this.camera.position, downVector, 0)
 
-        raycaster.set(this.camera.position, downVector)
-        const intersects = raycaster.intersectObject(
-            GooseGame.instance.gameManager.world.worldRenderer.mesh
+        const intersects = raycaster.intersectObjects(
+            //GooseGame.instance.gameManager.world.worldRenderer.mesh
+            GooseGame.instance.renderer.sceneManager.scene.children
         )
 
         if (intersects.length > 0) {
             const terrainHeight = intersects[0].point.y + this.playerHeight
             if (this.camera.position.y <= terrainHeight) {
-                this.camera.position.y = terrainHeight // Prevent sinking
+                // this.camera.position.y = terrainHeight // Prevent sinking
                 this.falling = false
             } else {
+                console.log('wee')
                 this.falling = true
             }
         }
@@ -201,6 +203,7 @@ class LocalPlayer {
      * Update the controls
      */
     render(delta) {
+        this.updateInteraction(delta)
         this.updateMovement(delta)
     }
 }
