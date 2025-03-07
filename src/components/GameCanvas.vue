@@ -51,8 +51,6 @@ export default {
                 store.commit('updatePlayers', players)
             },
         })
-
-        this.lockControls()
     },
     methods: {
         lockControls() {

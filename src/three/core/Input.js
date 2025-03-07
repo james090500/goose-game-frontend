@@ -9,7 +9,7 @@ class Controls {
         KeyD: false,
         Space: false,
         ShiftLeft: false,
-    } // Movement keys
+    } // Movement keys`
 
     constructor() {
         // Controls
@@ -17,6 +17,8 @@ class Controls {
             GooseGame.instance.renderer.sceneManager.camera,
             GooseGame.instance.renderer.renderer.domElement
         )
+
+        console.log(this.controls)
         this.controls.addEventListener(
             'lock',
             GooseGame.instance.config.ON_LOCK
@@ -40,10 +42,13 @@ class Controls {
         })
     }
     /**
-     * Lock the games controls
+     * Lock the controls
      */
     lock() {
-        this.controls.lock()
+        //https://issues.chromium.org/issues/40662608
+        GooseGame.instance.renderer.renderer.domElement.requestPointerLock({
+            unadjustedMovement: true,
+        })
     }
 }
 
