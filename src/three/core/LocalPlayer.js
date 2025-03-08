@@ -15,24 +15,10 @@ class LocalPlayer {
     moveSpeed = 7 // Speed of movement
     jumpSpeed = 10 // Speed of jump
     jumpDuration = 0.4 // Duration of jump
+    fallVelocity = 0
 
     constructor() {
         this.camera = GooseGame.instance.renderer.sceneManager.camera
-
-        this.waterOverlay = new Mesh(
-            new PlaneGeometry(3, 2),
-            new MeshBasicMaterial({
-                color: 0x006994,
-                transparent: true,
-                opacity: 0.75,
-                visible: false,
-                depthWrite: false,
-                depthTest: false,
-            })
-        )
-        this.waterOverlay.renderOrder = 999
-        this.waterOverlay.position.set(0, 0, -1) // Slightly in front of the camera
-        this.camera.add(this.waterOverlay) // Attach it to the camera
 
         // Store the previous position and rotation
         this.previousPosition = new Vector3()
@@ -114,7 +100,7 @@ class LocalPlayer {
         // Make the character fall
         if (this.falling && !this.jumping) {
             //TODO velocity
-            this.camera.position.add(new Vector3(0, -this.jumpSpeed * delta, 0)) // Down
+            this.camera.position.sub(new Vector3(0, this.jumpSpeed * delta, 0)) // Down
         }
         this.checkGroundCollision()
 
@@ -123,10 +109,8 @@ class LocalPlayer {
             this.camera.position.y <
             GooseGame.instance.gameManager.world.seaHeight
         ) {
-            this.waterOverlay.material.visible = true
             this.swimming = true
         } else {
-            this.waterOverlay.material.visible = false
             this.swimming = false
         }
 
@@ -158,21 +142,21 @@ class LocalPlayer {
     checkGroundCollision() {
         if (!GooseGame.instance.gameManager.world.worldRenderer.mesh) return
 
+        const raycaster = new Raycaster()
         const downVector = new Vector3(0, -1, 0)
-        const raycaster = new Raycaster(this.camera.position, downVector, 0)
 
+        raycaster.set(this.camera.position, downVector)
         const intersects = raycaster.intersectObjects(
-            //GooseGame.instance.gameManager.world.worldRenderer.mesh
             GooseGame.instance.renderer.sceneManager.scene.children
         )
 
         if (intersects.length > 0) {
             const terrainHeight = intersects[0].point.y + this.playerHeight
             if (this.camera.position.y <= terrainHeight) {
-                // this.camera.position.y = terrainHeight // Prevent sinking
+                this.camera.position.y = terrainHeight // Prevent sinking
+                this.fallVelocity = 0
                 this.falling = false
             } else {
-                console.log('wee')
                 this.falling = true
             }
         }
