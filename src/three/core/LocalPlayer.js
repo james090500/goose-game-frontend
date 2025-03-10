@@ -38,6 +38,9 @@ class LocalPlayer {
             mouse.LeftClick = false
 
             new ShotEntity(this.camera.position)
+            GooseGame.instance.gameManager.multiplayer.newEgg(
+                this.camera.position
+            )
         }
     }
     // Update movement

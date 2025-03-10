@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client'
 import PlayerEntity from '../entity/PlayerEntity.js'
 import GooseGame from '../GooseGame.js'
+import ShotEntity from '../entity/ShotEntity.js'
 
 class Multiplayer {
     players = new Map()
@@ -49,6 +50,14 @@ class Multiplayer {
         this.io.on('time', (data) => {
             GooseGame.instance.gameManager.world.worldTime = data
         })
+
+        // Eggs
+        this.io.on('egg', (data) => {
+            for (const eggPos of data) {
+                console.log(eggPos.position)
+                new ShotEntity(eggPos.position)
+            }
+        })
     }
     disconnect() {
         this.io.disconnect()
@@ -85,6 +94,9 @@ class Multiplayer {
             })
         }
         GooseGame.instance.config.ON_UPDATEPLAYERS(playerList)
+    }
+    newEgg(data) {
+        this.io.emit('egg', data)
     }
 }
 

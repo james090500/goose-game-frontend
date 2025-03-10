@@ -9,10 +9,6 @@ class ShotEntity {
     setPosition(position) {
         this.renderer.setPosition(position.x, position.y, position.z)
     }
-
-    setRotation(rotation) {
-        this.renderer.setRotation(rotation.x, rotation.y, rotation.z)
-    }
 }
 
 export default ShotEntity
