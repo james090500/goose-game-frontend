@@ -53,10 +53,7 @@ class Multiplayer {
 
         // Eggs
         this.io.on('egg', (data) => {
-            for (const eggPos of data) {
-                console.log(eggPos.position)
-                new ShotEntity(eggPos.position)
-            }
+            new ShotEntity(data)
         })
     }
     disconnect() {

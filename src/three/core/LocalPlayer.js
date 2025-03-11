@@ -1,14 +1,5 @@
 import GooseGame from '../GooseGame.js'
-import {
-    Euler,
-    Vector3,
-    Clock,
-    Raycaster,
-    Mesh,
-    PlaneGeometry,
-    MeshBasicMaterial,
-} from 'three'
-import ShotEntity from '../entity/ShotEntity.js'
+import { Euler, Vector3, Clock, Raycaster } from 'three'
 
 class LocalPlayer {
     playerHeight = 2 // Height of player
@@ -37,10 +28,10 @@ class LocalPlayer {
         if (mouse.LeftClick) {
             mouse.LeftClick = false
 
-            new ShotEntity(this.camera.position)
-            GooseGame.instance.gameManager.multiplayer.newEgg(
-                this.camera.position
-            )
+            const eggHeight = this.camera.position
+                .clone()
+                .sub(new Vector3(0, this.playerHeight, 0))
+            GooseGame.instance.gameManager.multiplayer.newEgg(eggHeight)
         }
     }
     // Update movement
