@@ -1,8 +1,8 @@
 import Multiplayer from './core/Multiplayer.js'
-import LocalPlayer from './core/LocalPlayer.js'
 import World from './world/World.js'
 import DebugGui from './gui/DebugGui.js'
 import GooseGame from './GooseGame.js'
+import LocalPlayerEntity from './entity/LocalPlayerEntity.js'
 
 class GameManager {
     constructor() {
@@ -13,7 +13,7 @@ class GameManager {
         this.multiplayer = new Multiplayer()
 
         // Local Player
-        this.localPlayer = new LocalPlayer()
+        this.thePlayer = new LocalPlayerEntity()
 
         // Gui
         this.debug = new DebugGui()
@@ -38,7 +38,7 @@ class GameManager {
      * A 20TPS LOOP
      */
     gameTick() {
-        this.localPlayer.emitMovement()
+        this.thePlayer.renderer.emitMovement()
         this.world.tick()
     }
     /**
@@ -52,7 +52,7 @@ class GameManager {
         GooseGame.instance.input.controls.update(delta)
 
         this.world.seaRenderer.render(time)
-        this.localPlayer.render(delta)
+        this.thePlayer.render(delta)
         this.debug.render()
 
         for (const entry of this.tickable) {

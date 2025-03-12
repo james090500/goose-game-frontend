@@ -1,10 +1,11 @@
 import GooseGame from '../GooseGame.js'
 import ShotRenderer from '../renderer/entity/ShotRenderer.js'
-import { Box3, Raycaster, Vector3 } from 'three'
+import { Box3, Raycaster, Vector3, Line3, Ray } from 'three'
 
 class ShotEntity {
     constructor(pos, dir) {
         this.renderer = new ShotRenderer()
+        this.renderer.mesh.layers.set(1)
 
         this.boundingBox = new Box3().setFromObject(this.renderer.mesh)
 
@@ -34,7 +35,7 @@ class ShotEntity {
 
         this.renderer.mesh.position.add(newDir)
 
-        if (this.checkCollision(this.direction)) {
+        if (this.checkCollision(this.direction) || this.checkHitPlayer()) {
             this.dispose()
         }
     }
@@ -47,23 +48,39 @@ class ShotEntity {
             0,
             1
         )
+
+        raycaster.layers.set(0)
+
         const intersects = raycaster.intersectObjects(
             GooseGame.instance.renderer.sceneManager.scene.children
         )
 
-        const temp = raycaster.intersectObject(
-            GooseGame.instance.renderer.sceneManager.camera
-        )
-        if (temp.length > 0) {
-            console.log(temp)
+        if (intersects.length > 0) {
+            return true
         }
 
-        if (intersects.length > 0) {
-            // console.log(intersects[0])
-            if (intersects[0].name == 'LocalPlayer') {
-                GooseGame.instance.gameManager.localPlayer.hasBeenShot()
-            }
+        return false
+    }
 
+    // Function to check ray-capsule intersection
+    checkHitPlayer() {
+        // Create a Ray
+        const ray = new Ray(this.renderer.mesh.position, this.direction)
+
+        const { start, end, radius } =
+            GooseGame.instance.gameManager.thePlayer.renderer.playerCollider
+
+        // Project ray onto capsule segment
+        const capsuleSegment = new Line3(start, end)
+        const closestPoint = new Vector3()
+        capsuleSegment.closestPointToPoint(ray.origin, true, closestPoint)
+
+        // Distance from ray to capsule's central line
+        const distance = ray.distanceSqToPoint(closestPoint)
+
+        // Check if the distance is within the capsule's radius squared
+        if (distance <= radius * radius) {
+            GooseGame.instance.gameManager.thePlayer.hasBeenShot()
             return true
         }
 

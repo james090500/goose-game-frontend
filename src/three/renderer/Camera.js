@@ -10,6 +10,8 @@ class Camera {
             520
         )
 
+        this.camera.layers.enable(1)
+
         return this.camera
     }
 }
