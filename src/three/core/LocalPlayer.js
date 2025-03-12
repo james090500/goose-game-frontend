@@ -1,15 +1,25 @@
 import GooseGame from '../GooseGame.js'
 import { Euler, Vector3, Clock, Raycaster } from 'three'
+import { Capsule } from 'three/examples/jsm/Addons.js'
 
 class LocalPlayer {
     playerHeight = 2 // Height of player
     moveSpeed = 7 // Speed of movement
     jumpSpeed = 10 // Speed of jump
     jumpDuration = 0.4 // Duration of jump
-    fallVelocity = 0
+    fallVelocity = new Vector3()
 
     constructor() {
         this.camera = GooseGame.instance.renderer.sceneManager.camera
+
+        this.playerCollider = new Capsule(
+            new Vector3(0, 0.35, 0),
+            new Vector3(0, 1, 0),
+            0.35
+        )
+
+        // Spawn player
+        this.respawn()
 
         // Store the previous position and rotation
         this.previousPosition = new Vector3()
@@ -29,9 +39,14 @@ class LocalPlayer {
             mouse.LeftClick = false
 
             const eggHeight = this.camera.position
-                .clone()
-                .sub(new Vector3(0, this.playerHeight, 0))
-            GooseGame.instance.gameManager.multiplayer.newEgg(eggHeight)
+            const eggDirection = new Vector3(0, 0, -1)
+
+            this.camera.getWorldDirection(eggDirection)
+
+            GooseGame.instance.gameManager.multiplayer.newEgg(
+                eggHeight,
+                eggDirection
+            )
         }
     }
     // Update movement
@@ -55,7 +70,7 @@ class LocalPlayer {
         //Calculate running
         let moveSpeed = this.moveSpeed * delta
         if (keys.ShiftLeft && !this.swimming) {
-            moveSpeed = (this.moveSpeed + 2) * delta
+            moveSpeed = (this.moveSpeed + 4) * delta
         } else if (this.swimming) {
             moveSpeed = (this.moveSpeed - 2) * delta
         }
@@ -93,8 +108,13 @@ class LocalPlayer {
 
         // Make the character fall
         if (this.falling && !this.jumping) {
-            //TODO velocity
-            this.camera.position.sub(new Vector3(0, this.jumpSpeed * delta, 0)) // Down
+            this.fallVelocity.y -= 7.2 * delta
+
+            const newVelocity = this.fallVelocity.clone()
+            newVelocity.multiplyScalar(this.jumpSpeed * delta)
+            this.camera.position.add(newVelocity) // Down
+        } else {
+            this.fallVelocity = new Vector3()
         }
         this.checkGroundCollision()
 
@@ -116,6 +136,9 @@ class LocalPlayer {
                 0
             )
         }
+
+        console.log(this.playerCollider)
+        this.playerCollider.translate(this.camera.position)
     }
 
     // Initiate jump
@@ -177,10 +200,25 @@ class LocalPlayer {
             this.previousRotation.copy(this.camera.rotation)
         }
     }
+
+    respawn() {
+        const randX = Math.random() * 512 - 256
+        const randZ = Math.random() * 512 - 256
+
+        this.camera.position.x = randX
+        this.camera.position.y = 100
+        this.camera.position.z = randZ
+    }
+
     /**
      * Update the controls
      */
     render(delta) {
+        // console.log(
+        //     GooseGame.instance.gameManager.world.octree.capsuleIntersect(
+        //         this.playerCollider
+        //     )
+        // )
         this.updateInteraction(delta)
         this.updateMovement(delta)
     }

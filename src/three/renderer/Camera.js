@@ -9,9 +9,6 @@ class Camera {
             0.1,
             520
         )
-        this.camera.position.y = 30
-        this.camera.position.x = 250
-        this.camera.position.z = 250
 
         return this.camera
     }

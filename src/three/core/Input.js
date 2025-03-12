@@ -23,34 +23,40 @@ class Controls {
             GooseGame.instance.renderer.renderer.domElement
         )
 
-        this.controls.addEventListener(
-            'lock',
-            GooseGame.instance.config.ON_LOCK
-        )
-        this.controls.addEventListener(
-            'unlock',
-            GooseGame.instance.config.ON_UNLOCK
-        )
+        this.controls.addEventListener('lock', (event) => {
+            GooseGame.instance.config.PAUSED = false
+            GooseGame.instance.config.ON_LOCK(event)
+        })
+        this.controls.addEventListener('unlock', (event) => {
+            GooseGame.instance.config.PAUSED = true
+            GooseGame.instance.config.ON_UNLOCK(event)
+        })
         this.controls.lookSpeed = 0.1
 
         // Mouse events
         window.addEventListener('mousedown', (event) => {
-            if (event.button == 0) {
-                this.mouse.LeftClick = true
-            } else if (event.button == 2) {
-                this.mouse.RightClick = true
+            if (!GooseGame.instance.config.PAUSED) {
+                if (event.button == 0) {
+                    this.mouse.LeftClick = true
+                } else if (event.button == 2) {
+                    this.mouse.RightClick = true
+                }
             }
         })
 
         // Keyboard event listeners
         window.addEventListener('keydown', (event) => {
-            if (this.keys.hasOwnProperty(event.code)) {
-                this.keys[event.code] = true
+            if (!GooseGame.instance.config.PAUSED) {
+                if (this.keys.hasOwnProperty(event.code)) {
+                    this.keys[event.code] = true
+                }
             }
         })
         window.addEventListener('keyup', (event) => {
-            if (this.keys.hasOwnProperty(event.code)) {
-                this.keys[event.code] = false
+            if (!GooseGame.instance.config.PAUSED) {
+                if (this.keys.hasOwnProperty(event.code)) {
+                    this.keys[event.code] = false
+                }
             }
         })
     }

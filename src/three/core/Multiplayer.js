@@ -53,7 +53,7 @@ class Multiplayer {
 
         // Eggs
         this.io.on('egg', (data) => {
-            new ShotEntity(data)
+            new ShotEntity(data.height, data.direction)
         })
     }
     disconnect() {
@@ -92,8 +92,11 @@ class Multiplayer {
         }
         GooseGame.instance.config.ON_UPDATEPLAYERS(playerList)
     }
-    newEgg(data) {
-        this.io.emit('egg', data)
+    newEgg(eggHeight, eggDirection) {
+        this.io.emit('egg', {
+            height: eggHeight,
+            direction: eggDirection,
+        })
     }
 }
 

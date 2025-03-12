@@ -1,6 +1,7 @@
 class Config {
     constructor(options) {
         return {
+            PAUSED: true,
             CANVAS: options.canvas,
             USERNAME: options.username,
             ON_LOCK: options.onLock,

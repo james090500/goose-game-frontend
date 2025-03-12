@@ -4,20 +4,23 @@ import GooseGame from '../../GooseGame'
 class ShotRenderer {
     constructor() {
         this.mesh = new Mesh(
-            new CapsuleGeometry(1, 1, 1, 6),
+            new CapsuleGeometry(0.5, 0.5, 1, 6),
             new MeshStandardMaterial({
                 color: 0xf0ead6,
             })
         )
-        GooseGame.instance.renderer.sceneManager.add(this.mesh)
 
-        setTimeout(() => {
-            GooseGame.instance.renderer.sceneManager.remove(this.mesh)
-        }, 30000)
+        this.mesh.name = 'shot'
+
+        GooseGame.instance.renderer.sceneManager.add(this.mesh)
     }
 
-    setPosition(x, y, z) {
-        this.mesh.position.set(x, y, z)
+    setPosition(position) {
+        this.mesh.position.set(position.x, position.y, position.z)
+    }
+
+    dispose() {
+        GooseGame.instance.renderer.sceneManager.remove(this.mesh)
     }
 }
 

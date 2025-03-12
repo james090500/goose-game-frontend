@@ -1,4 +1,5 @@
 import { Color, MathUtils } from 'three'
+import { Octree } from 'three/examples/jsm/Addons.js'
 import WorldRenderer from '../renderer/world/WorldRenderer.js'
 import SeaRenderer from '../renderer/world/SeaRenderer.js'
 import TreeEntity from '../entity/world/TreeEntity.js'
@@ -11,6 +12,7 @@ class World {
     worldTime = 6000
 
     constructor() {
+        this.octree = new Octree()
         this.worldRenderer = new WorldRenderer(this.worldSize)
         this.seaRenderer = new SeaRenderer(this.worldSize)
     }
