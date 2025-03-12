@@ -10,8 +10,6 @@ class ShotRenderer {
             })
         )
 
-        this.mesh.name = 'shot'
-
         GooseGame.instance.renderer.sceneManager.add(this.mesh)
     }
 

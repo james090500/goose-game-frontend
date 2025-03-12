@@ -1,6 +1,5 @@
 import GooseGame from '../GooseGame.js'
 import { Euler, Vector3, Clock, Raycaster } from 'three'
-import { Capsule } from 'three/examples/jsm/Addons.js'
 
 class LocalPlayer {
     playerHeight = 2 // Height of player
@@ -11,12 +10,6 @@ class LocalPlayer {
 
     constructor() {
         this.camera = GooseGame.instance.renderer.sceneManager.camera
-
-        this.playerCollider = new Capsule(
-            new Vector3(0, 0.35, 0),
-            new Vector3(0, 1, 0),
-            0.35
-        )
 
         // Spawn player
         this.respawn()
@@ -196,6 +189,10 @@ class LocalPlayer {
             )
             this.previousRotation.copy(this.camera.rotation)
         }
+    }
+
+    hasBeenShot() {
+        this.respawn()
     }
 
     respawn() {
