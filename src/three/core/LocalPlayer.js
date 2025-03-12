@@ -136,9 +136,6 @@ class LocalPlayer {
                 0
             )
         }
-
-        console.log(this.playerCollider)
-        this.playerCollider.translate(this.camera.position)
     }
 
     // Initiate jump
@@ -214,11 +211,6 @@ class LocalPlayer {
      * Update the controls
      */
     render(delta) {
-        // console.log(
-        //     GooseGame.instance.gameManager.world.octree.capsuleIntersect(
-        //         this.playerCollider
-        //     )
-        // )
         this.updateInteraction(delta)
         this.updateMovement(delta)
     }

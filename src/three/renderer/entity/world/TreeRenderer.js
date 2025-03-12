@@ -7,9 +7,6 @@ class TreeEntity {
             this.mesh = tree.clone()
             this.mesh.position.set(x, y, z)
             GooseGame.instance.renderer.sceneManager.add(this.mesh)
-
-            // console.log(1)
-            // GooseGame.instance.gameManager.world.octree.fromGraphNode(this.mesh)
         })
     }
 
