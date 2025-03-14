@@ -25,13 +25,14 @@ class LocalPlayerEntity {
 
             const camera = GooseGame.instance.renderer.sceneManager.camera
 
-            const eggHeight = camera.position
-            const eggDirection = new Vector3(0, 0, -1)
-
+            const eggDirection = new Vector3()
             camera.getWorldDirection(eggDirection)
 
+            const eggPosition = camera.position.clone()
+            eggPosition.add(eggDirection.clone().multiplyScalar(50 * delta))
+
             GooseGame.instance.gameManager.multiplayer.newEgg(
-                eggHeight,
+                eggPosition,
                 eggDirection
             )
         }

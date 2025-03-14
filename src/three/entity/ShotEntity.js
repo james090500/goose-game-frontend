@@ -35,7 +35,10 @@ class ShotEntity {
 
         this.renderer.mesh.position.add(newDir)
 
-        if (this.checkCollision(this.direction) || this.checkHitPlayer()) {
+        const checkHitPlayer = this.checkHitPlayer()
+        console.log(checkHitPlayer)
+
+        if (this.checkCollision(this.direction) || checkHitPlayer) {
             this.dispose()
         }
     }
@@ -79,7 +82,7 @@ class ShotEntity {
         const distance = ray.distanceSqToPoint(closestPoint)
 
         // Check if the distance is within the capsule's radius squared
-        if (distance <= radius * radius) {
+        if (distance <= 0.5) {
             GooseGame.instance.gameManager.thePlayer.hasBeenShot()
             return true
         }
